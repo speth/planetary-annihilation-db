@@ -60,11 +60,22 @@ class Unit(Thing):
         self.health = self.raw.pop('max_health', 0)
 
         self.weapons = []
+        self.build_arms = []
+        self.misc_tools = []
+
         for tool in self.raw.pop('tools', ()):
+            resource = tool['spec_id']
+            tool_name = resource.rsplit('/')[-1].split('.')[0]
             try:
-                self.weapons.append(Weapon(tool['spec_id']))
+                if 'weapon' in tool_name:
+                    self.weapons.append(Weapon(resource))
+                elif 'build_arm' in tool_name:
+                    self.build_arms.append(BuildArm(resource))
+                else:
+                    self.misc_tools.append(Thing(resource))
             except IOError:
-                pass
+                    pass
+
         self.dps = sum(w.dps for w in self.weapons)
         self.salvo_damage = sum(w.damage for w in self.weapons)
 
@@ -107,6 +118,20 @@ class Ammo(Thing):
 
     def __repr__(self):
         return '<Ammo: {!r}>'.format(self.name)
+
+
+class BuildArm(Thing):
+    def __init__(self, resource_name):
+        super().__init__(resource_name)
+
+        self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
+        demand = self.raw.pop('construction_demand', {})
+        self.metal_consumption = demand.get('metal', 0)
+        self.energy_consumption = demand.get('energy', 0)
+
+    def __repr__(self):
+        return '<Build Arm: {!r}>'.format(self.name)
+
 
 ###### Buildable Categories ######
 
