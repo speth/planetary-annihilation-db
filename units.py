@@ -1,4 +1,5 @@
 import json
+import pprint
 
 PA_ROOT = 'G:/Games/PlanetaryAnnihilation/PA/media'
 MISSING = '#MISSING#'
@@ -19,6 +20,22 @@ class Thing:
         with open(PA_ROOT + resource_name) as datafile:
             raw = json.load(datafile)
         self.raw = raw
+
+    def report(self, show_all=False):
+        out = []
+        for k,v in self.__dict__.items():
+            if not show_all and k in ('raw',):
+                continue
+            indent = len(k) + 2
+            s = pprint.pformat(v)
+            lines = s.split('\n')
+            out.append('{}: {}'.format(k, lines[0]))
+            out.extend(' '*indent + line for line in lines[1:])
+        return '\n'.join(out)
+
+    def __call__(self, show_all=False):
+        """ Print info about this unit """
+        print(self.report(show_all))
 
 
 class Unit(Thing):
@@ -54,6 +71,9 @@ class Unit(Thing):
         if self.role != MISSING:
             units[self.role] = self
 
+    def __repr__(self):
+        return '<Unit: {!r}>'.format(self.role)
+
 
 class Weapon(Thing):
     def __init__(self, resource_name):
@@ -61,6 +81,7 @@ class Weapon(Thing):
         WEAPONS[resource_name] = self
 
         self.rof = self.raw.pop('rate_of_fire', 0.0)
+        self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
 
         ammo_id = self.raw.pop('ammo_id', None)
         if ammo_id:
@@ -71,14 +92,21 @@ class Weapon(Thing):
             self.dps = 0.0
             self.damage = 0.0
 
+    def __repr__(self):
+        return '<Weapon: {!r}>'.format(self.name)
+
 
 class Ammo(Thing):
     def __init__(self, resource_name):
         super().__init__(resource_name)
         AMMO[resource_name] = self
 
+        self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
         self.damage = self.raw.pop('damage', 0.0)
         self.splash_damage = self.raw.pop('splash_damage', 0.0)
+
+    def __repr__(self):
+        return '<Ammo: {!r}>'.format(self.name)
 
 ###### Buildable Categories ######
 
