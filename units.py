@@ -79,6 +79,23 @@ class Unit(Thing):
         self.dps = sum(w.dps for w in self.weapons)
         self.salvo_damage = sum(w.damage for w in self.weapons)
 
+        # Economy
+        consumption = self.raw.pop('consumption', {})
+        production = self.raw.pop('production', {})
+        self.metal_rate = production.get('metal', 0)
+        self.metal_rate -= consumption.get('metal', 0)
+        self.energy_rate = production.get('energy', 0)
+        self.energy_rate -= consumption.get('energy', 0)
+        self.build_rate = 0
+        for tool in self.build_arms:
+            self.metal_rate -= tool.metal_consumption
+            self.energy_rate -= tool.energy_consumption
+            self.build_rate += tool.metal_consumption
+
+        for weapon in self.weapons:
+            self.metal_rate += weapon.metal_rate
+            self.energy_rate += weapon.energy_rate
+
         if self.role != MISSING:
             units[self.role] = self
 
@@ -102,6 +119,22 @@ class Weapon(Thing):
         else:
             self.dps = 0.0
             self.damage = 0.0
+
+        self.metal_rate = 0
+        self.energy_rate = 0
+        self.metal_per_shot = 0
+        self.energy_per_shot = 0
+        ammo_source = self.raw.pop('ammo_source', None)
+        if ammo_source:
+            self.ammo_demand = self.raw.pop('ammo_demand', 0)
+            ammo_per_shot = self.raw.pop('ammo_per_shot', 0)
+            rate = min(self.ammo_demand, ammo_per_shot * self.rof)
+            if ammo_source == 'energy':
+                self.energy_rate = - rate
+                self.energy_per_shot = ammo_per_shot
+            else:
+                self.metal_rate = - rate
+                self.metal_per_shot = ammo_per_shot
 
     def __repr__(self):
         return '<Weapon: {!r}>'.format(self.name)
