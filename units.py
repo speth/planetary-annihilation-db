@@ -29,7 +29,15 @@ class Unit(Thing):
         self.name = self.raw.pop('display_name', MISSING)
         self.role = self.raw.pop('unit_name', MISSING)
         self.description = self.raw.pop('description', MISSING)
-        self.unit_types = set(self.raw.pop('unit_types', ()))
+
+        self.unit_types = set()
+        for unit_type in self.raw.pop('unit_types', ()):
+            assert unit_type.startswith('UNITTYPE_')
+            self.unit_types.add(unit_type[9:])
+        self.buildable_types = self.raw.pop('buildable_types', '')
+
+        self.builds = set()
+        self.built_by = set()
 
         self.build_cost = self.raw.pop('build_metal_cost', 0)
         self.health = self.raw.pop('max_health', 0)
@@ -64,7 +72,6 @@ class Weapon(Thing):
             self.damage = 0.0
 
 
-
 class Ammo(Thing):
     def __init__(self, resource_name):
         super().__init__(resource_name)
@@ -73,11 +80,70 @@ class Ammo(Thing):
         self.damage = self.raw.pop('damage', 0.0)
         self.splash_damage = self.raw.pop('splash_damage', 0.0)
 
+###### Buildable Categories ######
+
+class SimpleRestriction:
+    def __init__(self, category):
+        self.category = category.strip()
+
+    def satisfies(self, unit):
+        return self.category in unit.unit_types
+
+class CompoundRestriction:
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+class CompoundAnd(CompoundRestriction):
+    def satisfies(self, unit):
+        return self.left.satisfies(unit) and self.right.satisfies(unit)
+
+class CompoundOr(CompoundRestriction):
+    def satisfies(self, unit):
+        return self.left.satisfies(unit) or self.right.satisfies(unit)
+
+class CompoundMinus(CompoundRestriction):
+    def satisfies(self, unit):
+        return self.left.satisfies(unit) and not self.right.satisfies(unit)
+
+def get_restriction(text):
+    if '|' in text:
+        args = text.split('|')
+        restriction = get_restriction(args.pop())
+        while args:
+            restriction = CompoundOr(get_restriction(args.pop()), restriction)
+    elif '&' in text:
+        args = text.split('&')
+        restriction = get_restriction(args.pop())
+        while args:
+            restriction = CompoundAnd(get_restriction(args.pop()), restriction)
+    elif '-' in text:
+        args = text.split('-')
+        restriction = get_restriction(args.pop())
+        while args:
+            restriction = CompoundMinus(get_restriction(args.pop()), restriction)
+    else:
+        restriction = SimpleRestriction(text)
+
+    return restriction
+
+def build_build_tree():
+    for unit in UNITS.values():
+        if unit.buildable_types:
+            r = get_restriction(unit.buildable_types)
+        else:
+            continue
+
+        for other in UNITS.values():
+            if r.satisfies(other):
+                unit.builds.add(other)
+                other.built_by.add(unit)
 
 def load_units():
     unitlist = json.load(open(PA_ROOT + '/pa/units/unit_list.json'))['units']
     for u in unitlist:
         Unit(u)
+    build_build_tree()
 
 def report():
     print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
