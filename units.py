@@ -1,7 +1,24 @@
 import json
 import pprint
 
-PA_ROOT = 'G:/Games/PlanetaryAnnihilation/PA/media'
+try:
+    config = json.load(open('padb.json'))
+except IOError:
+    print("""
+****************************************************************
+Error reading configuration. Create a file named 'padb.json'
+in the current directory with an entry in the following format,
+with the path to the Planetary Annihilation 'media' directory:
+
+{
+    "pa_root": "C:/Path/To/PlanetaryAnnihilation/PA/media"
+}
+
+****************************************************************
+""")
+    raise
+
+PA_ROOT = config['pa_root']
 MISSING = '#MISSING#'
 
 # internal use, keyed by resource_name
