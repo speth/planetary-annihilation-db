@@ -63,6 +63,7 @@ class Unit(Thing):
         self.name = self.raw.pop('display_name', MISSING)
         self.role = self.raw.pop('unit_name', MISSING)
         self.description = self.raw.pop('description', MISSING)
+        self.webname = self.name.replace(' ', '')
 
         self.unit_types = set()
         for unit_type in self.raw.pop('unit_types', ()):

@@ -16,7 +16,14 @@
     </tr>
     % for u in units:
     <tr>
-        <td>{{u.role}}</td>
+        <td>
+        <a href="/unit/{{u.webname}}">
+        % if u.name == u.role:
+        {{u.name}}
+        % else:
+        {{u.role}}: <em>{{u.name}}</em>
+        % end
+        </a></td>
         <td class="num">{{u.health}}</td>
         <td class="num">{{u.dps}}</td>
         <td class="num">{{u.salvo_damage}}</td>

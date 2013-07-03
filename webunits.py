@@ -19,16 +19,23 @@ from bottle import route, run, template, static_file
 
 import units
 units.load_units()
+webunits = {u.webname:u for u in units.units.values() if u.health > 0}
 
 @route('/list')
 def unit_list():
-    U = [u for u in units.units.values() if u.health > 0]
-    U.sort(key=lambda u: u.role)
+    U = sorted(webunits.values(), key=lambda u: u.role)
     return template('unitlist', units=U)
+
+
+@route('/unit/<name>')
+def callback(name):
+    return template('unit', u=webunits[name])
+
 
 @route('/static/<filename>')
 def callback(filename):
     return static_file(filename, root='./static/')
+
 
 if __name__ == '__main__':
     run(host='localhost', port=8080,
