@@ -15,7 +15,7 @@ except ImportError:
         print("Saved Bottle as '{}'".format(savename))
     get_bottle()
 
-from bottle import route, run, template
+from bottle import route, run, template, static_file
 
 import units
 units.load_units()
@@ -25,6 +25,10 @@ def unit_list():
     U = [u for u in units.units.values() if u.health > 0]
     U.sort(key=lambda u: u.role)
     return template('unitlist', units=U)
+
+@route('/static/<filename>')
+def callback(filename):
+    return static_file(filename, root='./static/')
 
 if __name__ == '__main__':
     run(host='localhost', port=8080,
