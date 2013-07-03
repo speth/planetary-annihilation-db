@@ -22,7 +22,9 @@ units.load_units()
 
 @route('/list')
 def unit_list():
-    return template('unitlist', units=units.units.values())
+    U = [u for u in units.units.values() if u.health > 0]
+    U.sort(key=lambda u: u.role)
+    return template('unitlist', units=U)
 
 if __name__ == '__main__':
     run(host='localhost', port=8080,

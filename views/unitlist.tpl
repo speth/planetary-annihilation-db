@@ -8,7 +8,6 @@
     <td>cost</td>
 </tr>
 % for u in units:
-%     if u.health > 0:
 <tr>
     <td>{{u.role}}</td>
     <td>{{u.health}}</td>
@@ -16,6 +15,5 @@
     <td>{{u.salvo_damage}}</td>
     <td>{{u.build_cost}}</td>
 </tr>
-%     end
 % end
 </table>
