@@ -1,3 +1,8 @@
+body {
+    font-family: sans-serif;
+    padding-left: 12pt;
+}
+
 table, td, th
 {
     border: 1px solid black;
@@ -5,7 +10,35 @@ table, td, th
     padding: 4px;
 }
 
+caption
+{
+    font-weight: bold;
+    font-size: 133%;
+    text-align: left;
+    color: #666666;
+    padding-bottom: 4pt;
+    padding-top: 12pt;
+}
+
+th
+{
+    text-align: left;
+}
+
 .num
 {
     text-align: right;
+}
+
+a:link {
+    color: #333399;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #333399;
+}
+
+a:hover {
+    text-decoration: underline;
 }
