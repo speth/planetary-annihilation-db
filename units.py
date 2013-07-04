@@ -19,7 +19,6 @@ with the path to the Planetary Annihilation 'media' directory:
     raise
 
 PA_ROOT = config['pa_root']
-MISSING = '#MISSING#'
 
 # internal use, keyed by resource_name
 UNITS = {}
@@ -65,9 +64,9 @@ class Unit(Thing):
         super().__init__(resource_name)
         UNITS[resource_name] = self
 
-        self.name = self.raw.pop('display_name', MISSING)
-        self.role = self.raw.pop('unit_name', MISSING)
-        self.description = self.raw.pop('description', MISSING)
+        self.name = self.raw.pop('display_name', self.safename)
+        self.role = self.raw.pop('unit_name', self.name)
+        self.description = self.raw.pop('description', '')
 
         self.unit_types = set()
         for unit_type in self.raw.pop('unit_types', ()):
