@@ -18,13 +18,77 @@ except ImportError:
 from bottle import route, run, template, static_file
 
 import units
+import itertools
 units.load_units()
-webunits = {u.webname:u for u in units.units.values() if u.health > 0}
+webunits = {u.webname:u for u in units.units.values()
+            if u.health > 0 and u.build_cost > 1}
 
-@route('/list')
+@route('/')
 def unit_list():
-    U = sorted(webunits.values(), key=lambda u: u.role)
-    return template('unitlist', units=U)
+    U = sorted(webunits.values(), key=lambda u: u.build_cost)
+    def get_units(restriction):
+        R = units.get_restriction(restriction)
+        for u in U:
+            if R.satisfies(u):
+                yield u
+
+    builder_cols = ['Name', 'Cost', 'Build Rate', 'HP']
+    builder_data = lambda u: (u, u.build_cost, u.build_rate, u.health)
+    factory_data = [builder_data(u) for u in get_units('Factory')]
+    factories = template('unit_table', caption='Factories',
+                         columns=builder_cols, data=factory_data)
+
+    fabber_data = [builder_data(u) for u in get_units('Mobile & Construction')]
+    fabbers = template('unit_table', caption='Construction Units',
+                       columns=builder_cols, data=fabber_data)
+
+    unit_cols = ['Name', 'Cost', 'DPS', 'HP']
+    def unit_data(restriction):
+        return [(u, u.build_cost, u.dps, u.health)
+                for u in get_units(restriction)]
+
+    vehicle_data = unit_data('Mobile & Tank - Construction')
+    vehicles = template('unit_table', caption='Vehicles',
+                        columns=unit_cols, data=vehicle_data)
+
+    bot_data = unit_data('Mobile & Bot - Construction')
+    bots = template('unit_table', caption='Bots',
+                    columns=unit_cols, data=bot_data)
+
+    plane_data = unit_data('Mobile & Air - Construction')
+    planes = template('unit_table', caption='Aircraft',
+                      columns=unit_cols, data=plane_data)
+
+    boat_data = unit_data('Mobile & Naval - Construction')
+    boats = template('unit_table', caption='Naval',
+                     columns=unit_cols, data=boat_data)
+
+    defense_data = unit_data('Structure & Defense')
+    defenses = template('unit_table', caption='Defensive Structures',
+                        columns=unit_cols, data=defense_data)
+
+    other_struct_data = [(u, u.build_cost, u.dps, u.health)
+                         for u in get_units('Structure - Defense - Factory')]
+    other_structs = template('unit_table', caption='Other Structures',
+                             columns=unit_cols, data=other_struct_data)
+
+    # Check to make sure we didn't forget anything important
+    other2 = set(webunits.values())
+    for u,*cols in itertools.chain(factory_data, fabber_data, vehicle_data,
+                                   bot_data, plane_data, boat_data,
+                                   defense_data, other_struct_data):
+        other2.remove(u)
+
+    if other2:
+        leftover_data = [(u, u.build_cost, u.dps, u.health) for u in other2]
+        leftover = template('unit_table', caption='Uncategorized Units',
+                            columns=unit_cols, data=leftover_data)
+    else:
+        leftover = ''
+
+    return template('unitlist', tables=[factories, fabbers, bots, vehicles,
+                                        planes, boats, defenses, other_structs,
+                                        leftover])
 
 
 @route('/unit/<name>')

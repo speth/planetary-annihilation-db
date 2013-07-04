@@ -34,7 +34,7 @@ From a command prompt in the directory containing `units.py`, run:
 python webunits.py
 ```
 
-Then, point your web browser to http://localhost:8080/list .
+Then, point your web browser to `http://localhost:8080/` .
 
 The first time you run `webunits.py`, it will automatically download a copy of
 [Bottle](http://bottlepy.org/). If this fails for some reason, you can
