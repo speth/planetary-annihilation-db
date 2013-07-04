@@ -38,6 +38,11 @@ class Thing:
             raw = json.load(datafile)
         self.raw = raw
 
+    @property
+    def safename(self):
+        """ A (hopefully) unique name that can be used in URLs """
+        return self.resource_name.rsplit('/', 1)[1].split('.')[0]
+
     def report(self, show_all=False):
         out = []
         for k,v in self.__dict__.items():
@@ -63,7 +68,6 @@ class Unit(Thing):
         self.name = self.raw.pop('display_name', MISSING)
         self.role = self.raw.pop('unit_name', MISSING)
         self.description = self.raw.pop('description', MISSING)
-        self.webname = self.name.replace(' ', '')
 
         self.unit_types = set()
         for unit_type in self.raw.pop('unit_types', ()):
@@ -114,8 +118,8 @@ class Unit(Thing):
             self.metal_rate += weapon.metal_rate
             self.energy_rate += weapon.energy_rate
 
-        if self.role != MISSING:
-            units[self.role] = self
+        if not self.safename.startswith('base_'):
+            units[self.safename] = self
 
     def __repr__(self):
         return '<Unit: {!r}>'.format(self.role)
@@ -127,7 +131,7 @@ class Weapon(Thing):
         WEAPONS[resource_name] = self
 
         self.rof = self.raw.pop('rate_of_fire', 0.0)
-        self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
+        self.name = self.safename
 
         ammo_id = self.raw.pop('ammo_id', None)
         if ammo_id:

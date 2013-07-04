@@ -11,7 +11,7 @@
   <tr>
     <td>
     % u = row[0]
-    <a href="/unit/{{u.webname}}">
+    <a href="/unit/{{u.safename}}">
     % if u.name == u.role:
     {{u.name}}
     % else:

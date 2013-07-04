@@ -20,8 +20,8 @@ from bottle import route, run, template, static_file
 import units
 import itertools
 units.load_units()
-webunits = {u.webname:u for u in units.units.values()
-            if u.health > 0 and u.build_cost > 1}
+webunits = {u.safename:u for u in units.units.values()
+            if u.health > 0 and u.build_cost > 0}
 
 @route('/')
 def unit_list():
@@ -93,7 +93,7 @@ def unit_list():
 
 @route('/unit/<name>')
 def callback(name):
-    return template('unit', u=webunits[name])
+    return template('unit', u=units.units[name])
 
 
 @route('/static/<filename>')

@@ -18,7 +18,7 @@
       <li>Built by:
         <ul>
           % for other in u.built_by:
-          <li> <a href="/unit/{{other.webname}}">
+          <li> <a href="/unit/{{other.safename}}">
           % if other.name == other.role:
           {{other.name}}
           % else:
@@ -32,7 +32,7 @@
       <li>Builds:
         <ul>
           % for other in u.builds:
-          <li><a href="/unit/{{other.webname}}">
+          <li><a href="/unit/{{other.safename}}">
           % if other.name == other.role:
           {{other.name}}
           % else:
