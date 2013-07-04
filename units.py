@@ -137,9 +137,18 @@ class Weapon(Thing):
             self.ammo = Ammo(ammo_id)
             self.damage = self.ammo.damage + self.ammo.splash_damage
             self.dps = self.rof * self.damage
+            self.muzzle_velocity = self.ammo.muzzle_velocity
+            self.splash_damage = self.ammo.splash_damage
+            self.splash_radius = self.ammo.splash_radius
         else:
+            self.ammo = None
             self.dps = 0.0
             self.damage = 0.0
+            self.muzzle_velocity = 0.0
+            self.splash_damage = 0
+            self.splash_radius = 0
+
+        self.max_range = self.raw.pop('max_range', 0.0)
 
         self.metal_rate = 0
         self.energy_rate = 0
@@ -169,6 +178,10 @@ class Ammo(Thing):
         self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
         self.damage = self.raw.pop('damage', 0.0)
         self.splash_damage = self.raw.pop('splash_damage', 0.0)
+        self.splash_radius = self.raw.pop('splash_radius', 0.0)
+        self.muzzle_velocity = self.raw.pop('initial_velocity', 0.0)
+        self.max_velocity = self.raw.pop('max_velocity', 0.0)
+        self.lifetime = self.raw.pop('lifetime', 0.0)
 
     def __repr__(self):
         return '<Ammo: {!r}>'.format(self.name)
