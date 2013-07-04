@@ -212,24 +212,13 @@ class CompoundMinus(CompoundRestriction):
 
 def get_restriction(text):
     if '|' in text:
-        args = text.split('|')
-        restriction = get_restriction(args.pop())
-        while args:
-            restriction = CompoundOr(get_restriction(args.pop()), restriction)
+        return CompoundOr(*map(get_restriction, text.split('|', 1)))
     elif '&' in text:
-        args = text.split('&')
-        restriction = get_restriction(args.pop())
-        while args:
-            restriction = CompoundAnd(get_restriction(args.pop()), restriction)
+        return CompoundAnd(*map(get_restriction, text.split('&', 1)))
     elif '-' in text:
-        args = text.split('-')
-        restriction = get_restriction(args.pop())
-        while args:
-            restriction = CompoundMinus(get_restriction(args.pop()), restriction)
+        return CompoundMinus(*map(get_restriction, text.rsplit('-', 1)))
     else:
-        restriction = SimpleRestriction(text)
-
-    return restriction
+        return SimpleRestriction(text)
 
 def build_build_tree():
     for unit in UNITS.values():
