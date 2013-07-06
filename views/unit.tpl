@@ -11,86 +11,62 @@
     % else:
     <h1>{{u.role}}: <em>{{u.name}}</em></h1>
     % end
-    {{u.description}}
+    <em>{{u.description}}</em>
     <ul>
       <li>HP: {{u.health}}</li>
       <li>Build cost: {{u.build_cost}} metal</li>
-      <li>Built by:
-        <ul>
-          % for other in u.built_by:
-          <li> <a href="/unit/{{other.safename}}">
-          % if other.name == other.role:
-          {{other.name}}
-          % else:
-          {{other.role}}: <em>{{other.name}}</em>
-          % end
-          </a></li>
-          % end
-        </ul>
-      </li>
-      % if u.affects_economy:
-      <li>Economy:
-        <ul>
-          % if u.production.metal:
-          <li>Metal production: {{u.production.metal}} / s
-          % end
-          % if u.production.energy:
-          <li>Energy production: {{u.production.energy}} / s
-          % end
-          % if u.consumption.metal:
-          <li>Base metal consumption: {{u.consumption.metal}} / s
-          % end
-          % if u.consumption.energy:
-          <li>Base energy consumption: {{u.consumption.energy}} / s
-          % end
-          % if u.storage.metal:
-          <li>Metal storage: {{u.storage.metal}}
-          % end
-          % if u.storage.energy:
-          <li>Energy storage: {{u.storage.energy}}
-          % end
-          % if u.weapon_consumption.metal:
-          <li>Weapon metal consumption: {{u.weapon_consumption.metal}} / s
-          % end
-          % if u.weapon_consumption.energy:
-          <li>Weapon energy consumption: {{u.weapon_consumption.energy}} / s
-          % end
-          % if u.build_rate:
-          <li>Build rate: {{u.build_rate}}
-          % end
-          % if u.tool_consumption.metal:
-          <li>Fabrication metal consumption: {{u.tool_consumption.metal}} / s
-          % end
-          % if u.tool_consumption.energy:
-          <li>Fabrication energy consumption: {{u.tool_consumption.energy}} / s
-          % end
-        </ul>
-      </li>
-      % end
-      % if u.builds:
-      <li>Builds:
-        <ul>
-          % for other in u.builds:
-          <li><a href="/unit/{{other.safename}}">
-          % if other.name == other.role:
-          {{other.name}}
-          % else:
-          {{other.role}}: <em>{{other.name}}</em>
-          % end
-          </a></li>
-          % end
-        </ul>
-      </li>
-      % end
       % if len(u.weapons) > 1:
         <li>Maximum range: {{max(w.max_range for w in u.weapons)}}</li>
         <li>Total DPS: {{u.dps}}</li>
       % end
+      % if u.affects_economy:
+      <br />
+      <li><div class='heading'>Economy:</div>
+        <ul>
+          % if u.production.metal:
+          <li>Metal production: {{u.production.metal}} / s</li>
+          % end
+          % if u.production.energy:
+          <li>Energy production: {{u.production.energy}} / s</li>
+          % end
+          % if u.consumption.metal:
+          <li>Base metal consumption: {{u.consumption.metal}} / s</li>
+          % end
+          % if u.consumption.energy:
+          <li>Base energy consumption: {{u.consumption.energy}} / s</li>
+          % end
+          % if u.storage.metal:
+          <li>Metal storage: {{u.storage.metal}}</li>
+          % end
+          % if u.storage.energy:
+          <li>Energy storage: {{u.storage.energy}}</li>
+          % end
+          % if u.weapon_consumption.metal:
+          <li>Weapon metal consumption: {{u.weapon_consumption.metal}} / s</li>
+          % end
+          % if u.weapon_consumption.energy:
+          <li>Weapon energy consumption: {{u.weapon_consumption.energy}} / s</li>
+          % end
+          % if u.build_rate:
+          <li>Build rate: {{u.build_rate}}</li>
+          % end
+          % if u.tool_consumption.metal:
+          <li>Fabrication metal consumption: {{u.tool_consumption.metal}} / s</li>
+          % end
+          % if u.tool_consumption.energy:
+          <li>Fabrication energy consumption: {{u.tool_consumption.energy}} / s</li>
+          % end
+        </ul>
+      </li>
+      % end
+      % if u.weapons:
+      <br />
+      % end
       % for i, w in enumerate(u.weapons):
         % if len(u.weapons) > 1:
-          <li>Weapon {{i+1}}:</li>
+          <li><div class='heading'>Weapon {{i+1}}:</div></li>
         % else:
-          <li>Weapon:</li>
+          <li><div class='heading'>Weapon:</div></li>
         % end
         <ul>
           <li>Range: {{w.max_range}}</li>
@@ -106,6 +82,39 @@
           % end
         </ul>
       % end
+      % if u.builds:
+      <br />
+      <li><div class='heading'>Builds:</div>
+        <ul>
+          % for other in u.builds:
+          <li><a href="/unit/{{other.safename}}">
+          % if other.name == other.role:
+          {{other.name}}
+          % else:
+          {{other.role}}: <em>{{other.name}}</em>
+          % end
+          </a></li>
+          % end
+        </ul>
+      </li>
+      % end
+      % if u.built_by:
+        <br />
+        <li><div class='heading'>Built by:</div>
+          <ul>
+            % for other in u.built_by:
+            <li> <a href="/unit/{{other.safename}}">
+            % if other.name == other.role:
+            {{other.name}}
+            % else:
+            {{other.role}}: <em>{{other.name}}</em>
+            % end
+            </a></li>
+            % end
+          </ul>
+        </li>
+      % end
+
     </ul>
   </body>
 </html>

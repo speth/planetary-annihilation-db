@@ -20,9 +20,21 @@ caption
     padding-top: 12pt;
 }
 
+h1
+{
+    color: #666666;
+    font-size: 166%;
+    margin-bottom: 4pt;
+}
+
 th
 {
     text-align: left;
+}
+
+div.heading
+{
+    font-weight: bold;
 }
 
 .num
