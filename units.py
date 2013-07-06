@@ -24,17 +24,42 @@ PA_ROOT = config['pa_root']
 UNITS = {}
 WEAPONS = {}
 AMMO = {}
+THINGS = {}
 
 # for inspection, using a friendly name
 units = {}
 weapons = {}
 
+class Resources:
+    def __init__(self, metal=0, energy=0):
+        self.metal = metal
+        self.energy = energy
+
+    def __repr__(self):
+        s = 'Resource('
+        if self.metal:
+            s += 'metal={}'.format(self.metal)
+            if self.energy:
+                s += ', '
+        if self.energy:
+            s += 'energy={}'.format(self.energy)
+        s += ')'
+        return s
+
 
 class Thing:
+    base = None
+
     def __init__(self, resource_name):
-        self.resource_name = resource_name
         with open(PA_ROOT + resource_name) as datafile:
             raw = json.load(datafile)
+
+        if 'base_spec' in raw:
+            base = self.__class__(raw['base_spec'])
+            self.__dict__.update(base.__dict__)
+            self.base = base
+
+        self.resource_name = resource_name
         self.raw = raw
 
     @property
@@ -60,6 +85,17 @@ class Thing:
 
 
 class Unit(Thing):
+    unit_types = ()
+    buildable_types = ''
+    build_cost = 0
+    health = 0
+    weapons = ()
+    build_arms = ()
+    misc_tools = ()
+    production = Resources()
+    consumption = Resources()
+    storage = Resources()
+
     def __init__(self, resource_name):
         super().__init__(resource_name)
         UNITS[resource_name] = self
@@ -68,65 +104,86 @@ class Unit(Thing):
         self.role = self.raw.pop('unit_name', self.name)
         self.description = self.raw.pop('description', '')
 
-        self.unit_types = set()
-        for unit_type in self.raw.pop('unit_types', ()):
-            assert unit_type.startswith('UNITTYPE_')
-            self.unit_types.add(unit_type[9:])
-        self.buildable_types = self.raw.pop('buildable_types', '')
+        if 'unit_types' in self.raw:
+            self.unit_types = set()
+            for unit_type in self.raw.pop('unit_types'):
+                assert unit_type.startswith('UNITTYPE_')
+                self.unit_types.add(unit_type[9:])
+
+        if 'buildable_types' in self.raw:
+            self.buildable_types = self.raw.pop('buildable_types')
 
         self.builds = set()
         self.built_by = set()
 
-        self.build_cost = self.raw.pop('build_metal_cost', 0)
-        self.health = self.raw.pop('max_health', 0)
+        if 'build_metal_cost' in self.raw:
+            self.build_cost = self.raw.pop('build_metal_cost')
+        if 'max_health' in self.raw:
+            self.health = self.raw.pop('max_health')
 
-        self.weapons = []
-        self.build_arms = []
-        self.misc_tools = []
-
-        for tool in self.raw.pop('tools', ()):
-            resource = tool['spec_id']
-            tool_name = resource.rsplit('/')[-1].split('.')[0]
-            try:
-                if 'weapon' in tool_name:
-                    self.weapons.append(Weapon(resource))
-                elif 'build_arm' in tool_name:
-                    self.build_arms.append(BuildArm(resource))
-                else:
-                    self.misc_tools.append(Thing(resource))
-            except IOError:
-                    pass
+        if 'tools' in self.raw:
+            self.weapons = []
+            self.build_arms = []
+            self.misc_tools = []
+            for tool in self.raw.pop('tools', ()):
+                resource = tool['spec_id']
+                tool_name = resource.rsplit('/')[-1].split('.')[0]
+                try:
+                    if 'weapon' in tool_name:
+                        self.weapons.append(Weapon(resource))
+                    elif 'build_arm' in tool_name:
+                        self.build_arms.append(BuildArm(resource))
+                    else:
+                        self.misc_tools.append(Thing(resource))
+                except IOError:
+                        pass
 
         self.dps = sum(w.dps for w in self.weapons)
         self.salvo_damage = sum(w.damage for w in self.weapons)
 
         # Economy
-        consumption = self.raw.pop('consumption', {})
-        production = self.raw.pop('production', {})
-        storage = self.raw.pop('storage', {})
-        self.metal_rate = production.get('metal', 0)
-        self.metal_rate -= consumption.get('metal', 0)
-        self.energy_rate = production.get('energy', 0)
-        self.energy_rate -= consumption.get('energy', 0)
-        self.metal_storage = storage.get('metal', 0)
-        self.energy_storage = storage.get('energy', 0)
+        for field in ('consumption', 'production', 'storage'):
+            data = self.raw.pop(field, {})
+            base = getattr(self, field)
+            setattr(self, field, Resources(base.metal, base.energy))
+            if 'metal' in data:
+                getattr(self, field).metal = data['metal']
+            if 'energy' in data:
+                getattr(self, field).energy = data['energy']
+
         self.build_rate = 0
 
-        if (self.metal_rate > 0 or self.energy_rate > 0 or
-            self.metal_storage or self.energy_storage):
-            self.unit_types.add('Economy')
+        if ('Economy' not in self.unit_types and
+            (self.production.metal or self.production.energy or
+             self.storage.metal or self.storage.energy)):
+            if not self.unit_types:
+                self.unit_types = set(('Economy',))
+            else:
+                self.unit_types.add('Economy')
 
+        self.tool_consumption = Resources()
         for tool in self.build_arms:
-            self.metal_rate -= tool.metal_consumption
-            self.energy_rate -= tool.energy_consumption
+            self.tool_consumption.metal += tool.metal_consumption
+            self.tool_consumption.energy += tool.energy_consumption
             self.build_rate += tool.metal_consumption
 
+        self.weapon_consumption = Resources()
         for weapon in self.weapons:
-            self.metal_rate += weapon.metal_rate
-            self.energy_rate += weapon.energy_rate
+            self.weapon_consumption.metal -= weapon.metal_rate
+            self.weapon_consumption.energy -= weapon.energy_rate
 
         if not self.safename.startswith('base_'):
             units[self.safename] = self
+
+    @property
+    def metal_rate(self):
+        return (self.production.metal - self.consumption.metal
+                - self.tool_consumption.metal - self.weapon_consumption.metal)
+
+    @property
+    def energy_rate(self):
+        return (self.production.energy - self.consumption.energy
+                - self.tool_consumption.energy - self.weapon_consumption.energy)
 
     def __repr__(self):
         return '<Unit: {!r}>'.format(self.role)

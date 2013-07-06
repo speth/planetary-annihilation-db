@@ -74,7 +74,7 @@ def unit_list():
     econ_cols = ['Name', 'Cost', 'HP', 'M Rate', 'E Rate',
                  'M Storage', 'E Storage']
     econ_data = [(u, u.build_cost, u.health, u.metal_rate, u.energy_rate,
-                  u.metal_storage, u.energy_storage)
+                  u.storage.metal, u.storage.energy)
                  for u in get_units('Structure & Economy')]
     econ = template('unit_table', caption='Economic Structures',
                     columns=econ_cols, data=econ_data)
@@ -91,7 +91,7 @@ def unit_list():
                                    bot_data, plane_data, boat_data,
                                    orbital_data, defense_data, econ_data,
                                    other_struct_data):
-        other2.remove(u)
+        other2.discard(u)
 
     if other2:
         leftover_data = [(u, u.build_cost, u.dps, u.health) for u in other2]
