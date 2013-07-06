@@ -71,8 +71,16 @@ def unit_list():
     defenses = template('unit_table', caption='Defensive Structures',
                         columns=unit_cols, data=defense_data)
 
+    econ_cols = ['Name', 'Cost', 'HP', 'M Rate', 'E Rate',
+                 'M Storage', 'E Storage']
+    econ_data = [(u, u.build_cost, u.health, u.metal_rate, u.energy_rate,
+                  u.metal_storage, u.energy_storage)
+                 for u in get_units('Structure & Economy')]
+    econ = template('unit_table', caption='Economic Structures',
+                    columns=econ_cols, data=econ_data)
+
     other_struct_data = [(u, u.build_cost, u.dps, u.health)
-                         for u in get_units('Structure - Defense - Factory')]
+                         for u in get_units('Structure - Defense - Factory - Economy')]
     other_structs = template('unit_table', caption='Other Structures',
                              columns=unit_cols, data=other_struct_data)
 
@@ -81,7 +89,8 @@ def unit_list():
     other2 = set(webunits.values())
     for u,*cols in itertools.chain(factory_data, fabber_data, vehicle_data,
                                    bot_data, plane_data, boat_data,
-                                   orbital_data, defense_data, other_struct_data):
+                                   orbital_data, defense_data, econ_data,
+                                   other_struct_data):
         other2.remove(u)
 
     if other2:
@@ -93,7 +102,7 @@ def unit_list():
 
     return template('unitlist', tables=[factories, fabbers, bots, vehicles,
                                         planes, boats, orbital, defenses,
-                                        other_structs, leftover])
+                                        econ, other_structs, leftover])
 
 
 @route('/unit/<name>')
