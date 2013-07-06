@@ -1,3 +1,4 @@
+% import webunits
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -87,13 +88,18 @@
       <li><div class='heading'>Builds:</div>
         <ul>
           % for other in u.builds:
-          <li><a href="/unit/{{other.safename}}">
-          % if other.name == other.role:
-          {{other.name}}
-          % else:
-          {{other.role}}: <em>{{other.name}}</em>
-          % end
-          </a></li>
+          <li>
+            <a href="/unit/{{other.safename}}">
+              % if other.name == other.role:
+                {{other.name}}
+              % else:
+                {{other.role}}: <em>{{other.name}}</em>
+              % end
+            </a>
+            % if u.build_rate and other.build_cost:
+              ({{webunits.timestr(other.build_cost / u.build_rate)}})
+            % end
+          </li>
           % end
         </ul>
       </li>
@@ -103,13 +109,18 @@
         <li><div class='heading'>Built by:</div>
           <ul>
             % for other in u.built_by:
-            <li> <a href="/unit/{{other.safename}}">
-            % if other.name == other.role:
-            {{other.name}}
-            % else:
-            {{other.role}}: <em>{{other.name}}</em>
-            % end
-            </a></li>
+            <li>
+              <a href="/unit/{{other.safename}}">
+                % if other.name == other.role:
+                  {{other.name}}
+                % else:
+                  {{other.role}}: <em>{{other.name}}</em>
+                % end
+              </a>
+              % if other.build_rate:
+                ({{webunits.timestr(u.build_cost / other.build_rate)}})
+              % end
+            </li>
             % end
           </ul>
         </li>

@@ -23,6 +23,13 @@ units.load_units()
 webunits = {u.safename:u for u in units.units.values()
             if u.health > 0 and u.build_cost > 0}
 
+def timestr(val):
+    """ Convert a time in seconds into string with the format '[m]m:ss'."""
+    val = int(val)
+    minutes = val // 60
+    seconds = val % 60
+    return '{}:{:02}'.format(minutes, seconds)
+
 @route('/')
 def unit_list():
     U = sorted(webunits.values(), key=lambda u: u.build_cost)
