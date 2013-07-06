@@ -103,11 +103,19 @@ class Unit(Thing):
         # Economy
         consumption = self.raw.pop('consumption', {})
         production = self.raw.pop('production', {})
+        storage = self.raw.pop('storage', {})
         self.metal_rate = production.get('metal', 0)
         self.metal_rate -= consumption.get('metal', 0)
         self.energy_rate = production.get('energy', 0)
         self.energy_rate -= consumption.get('energy', 0)
+        self.metal_storage = storage.get('metal', 0)
+        self.energy_storage = storage.get('energy', 0)
         self.build_rate = 0
+
+        if (self.metal_rate > 0 or self.energy_rate > 0 or
+            self.metal_storage or self.energy_storage):
+            self.unit_types.add('Economy')
+
         for tool in self.build_arms:
             self.metal_rate -= tool.metal_consumption
             self.energy_rate -= tool.energy_consumption
