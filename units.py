@@ -190,11 +190,27 @@ class Unit(Thing):
 
 
 class Weapon(Thing):
+    rof = 0.0
+    ammo = None
+    dps = 0.0
+    damage = 0.0
+    muzzle_velocity = 0.0
+    splash_damage = 0.0
+    splash_radius = 0
+    max_range = 0
+
+    metal_rate = 0
+    energy_rate = 0
+    metal_per_shot = 0
+    energy_per_shot = 0
+    ammo_demand = 0
+
     def __init__(self, resource_name):
         super().__init__(resource_name)
         WEAPONS[resource_name] = self
 
-        self.rof = self.raw.pop('rate_of_fire', 0.0)
+        if 'rate_of_fire' in self.raw:
+            self.rof = self.raw.pop('rate_of_fire')
         self.name = self.safename
 
         ammo_id = self.raw.pop('ammo_id', None)
@@ -205,23 +221,14 @@ class Weapon(Thing):
             self.muzzle_velocity = self.ammo.muzzle_velocity
             self.splash_damage = self.ammo.splash_damage
             self.splash_radius = self.ammo.splash_radius
-        else:
-            self.ammo = None
-            self.dps = 0.0
-            self.damage = 0.0
-            self.muzzle_velocity = 0.0
-            self.splash_damage = 0
-            self.splash_radius = 0
 
-        self.max_range = self.raw.pop('max_range', 0.0)
+        if 'max_range' in self.raw:
+            self.max_range = self.raw.pop('max_range')
 
-        self.metal_rate = 0
-        self.energy_rate = 0
-        self.metal_per_shot = 0
-        self.energy_per_shot = 0
         ammo_source = self.raw.pop('ammo_source', None)
         if ammo_source:
-            self.ammo_demand = self.raw.pop('ammo_demand', 0)
+            if 'ammo_demand' in self.raw:
+                self.ammo_demand = self.raw.pop('ammo_demand')
             ammo_per_shot = self.raw.pop('ammo_per_shot', 0)
             rate = min(self.ammo_demand, ammo_per_shot * self.rof)
             if ammo_source == 'energy':
@@ -236,30 +243,48 @@ class Weapon(Thing):
 
 
 class Ammo(Thing):
+    damage = 0.0
+    splash_damage = 0.0
+    splash_radius = 0
+    muzzle_velocity = 0
+    max_velocity = 0
+    lifetime = 0
+
     def __init__(self, resource_name):
         super().__init__(resource_name)
         AMMO[resource_name] = self
 
         self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
-        self.damage = self.raw.pop('damage', 0.0)
-        self.splash_damage = self.raw.pop('splash_damage', 0.0)
-        self.splash_radius = self.raw.pop('splash_radius', 0.0)
-        self.muzzle_velocity = self.raw.pop('initial_velocity', 0.0)
-        self.max_velocity = self.raw.pop('max_velocity', 0.0)
-        self.lifetime = self.raw.pop('lifetime', 0.0)
+        if 'damage' in self.raw:
+            self.damage = self.raw.pop('damage')
+        if 'splash_damage' in self.raw:
+            self.splash_damage = self.raw.pop('splash_damage')
+        if 'splash_radius' in self.raw:
+            self.splash_radius = self.raw.pop('splash_radius')
+        if 'initial_velocity' in self.raw:
+            self.muzzle_velocity = self.raw.pop('initial_velocity')
+        if 'max_velocity' in self.raw:
+            self.max_velocity = self.raw.pop('max_velocity')
+        if 'lifetime' in self.raw:
+            self.lifetime = self.raw.pop('lifetime')
 
     def __repr__(self):
         return '<Ammo: {!r}>'.format(self.name)
 
 
 class BuildArm(Thing):
+    metal_consumption = 0
+    energy_consumption = 0
+
     def __init__(self, resource_name):
         super().__init__(resource_name)
 
         self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
         demand = self.raw.pop('construction_demand', {})
-        self.metal_consumption = demand.get('metal', 0)
-        self.energy_consumption = demand.get('energy', 0)
+        if 'metal' in demand:
+            self.metal_consumption = demand.get('metal')
+        if 'energy' in demand:
+            self.energy_consumption = demand.get('energy')
 
     def __repr__(self):
         return '<Build Arm: {!r}>'.format(self.name)
