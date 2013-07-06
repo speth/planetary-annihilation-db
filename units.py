@@ -185,6 +185,10 @@ class Unit(Thing):
         return (self.production.energy - self.consumption.energy
                 - self.tool_consumption.energy - self.weapon_consumption.energy)
 
+    @property
+    def affects_economy(self):
+        return bool(self.metal_rate or self.energy_rate or self.build_rate)
+
     def __repr__(self):
         return '<Unit: {!r}>'.format(self.role)
 

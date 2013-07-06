@@ -28,6 +28,45 @@
           % end
         </ul>
       </li>
+      % if u.affects_economy:
+      <li>Economy:
+        <ul>
+          % if u.production.metal:
+          <li>Metal production: {{u.production.metal}} / s
+          % end
+          % if u.production.energy:
+          <li>Energy production: {{u.production.energy}} / s
+          % end
+          % if u.consumption.metal:
+          <li>Base metal consumption: {{u.consumption.metal}} / s
+          % end
+          % if u.consumption.energy:
+          <li>Base energy consumption: {{u.consumption.energy}} / s
+          % end
+          % if u.storage.metal:
+          <li>Metal storage: {{u.storage.metal}}
+          % end
+          % if u.storage.energy:
+          <li>Energy storage: {{u.storage.energy}}
+          % end
+          % if u.weapon_consumption.metal:
+          <li>Weapon metal consumption: {{u.weapon_consumption.metal}} / s
+          % end
+          % if u.weapon_consumption.energy:
+          <li>Weapon energy consumption: {{u.weapon_consumption.energy}} / s
+          % end
+          % if u.build_rate:
+          <li>Build rate: {{u.build_rate}}
+          % end
+          % if u.tool_consumption.metal:
+          <li>Fabrication metal consumption: {{u.tool_consumption.metal}} / s
+          % end
+          % if u.tool_consumption.energy:
+          <li>Fabrication energy consumption: {{u.tool_consumption.energy}} / s
+          % end
+        </ul>
+      </li>
+      % end
       % if u.builds:
       <li>Builds:
         <ul>
