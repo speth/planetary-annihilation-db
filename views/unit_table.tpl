@@ -10,14 +10,8 @@
   % for row in data:
   <tr>
     <td>
-    % u = row[0]
-    <a href="/unit/{{u.safename}}">
-    % if u.name == u.role:
-    {{u.name}}
-    % else:
-    {{u.role}}: <em>{{u.name}}</em>
-    % end
-    </a></td>
+      % include unit_link unit=row[0]
+    </td>
 
     % for item in row[1:]:
     <td class="num">{{item}}</td>

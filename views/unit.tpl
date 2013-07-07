@@ -89,13 +89,7 @@
         <ul>
           % for other in u.builds:
           <li>
-            <a href="/unit/{{other.safename}}">
-              % if other.name == other.role:
-                {{other.name}}
-              % else:
-                {{other.role}}: <em>{{other.name}}</em>
-              % end
-            </a>
+            % include unit_link unit=other
             % if u.build_rate and other.build_cost:
               ({{webunits.timestr(other.build_cost / u.build_rate)}})
             % end
@@ -110,13 +104,7 @@
           <ul>
             % for other in u.built_by:
             <li>
-              <a href="/unit/{{other.safename}}">
-                % if other.name == other.role:
-                  {{other.name}}
-                % else:
-                  {{other.role}}: <em>{{other.name}}</em>
-                % end
-              </a>
+              % include unit_link unit=other
               % if other.build_rate:
                 ({{webunits.timestr(u.build_cost / other.build_rate)}})
               % end
