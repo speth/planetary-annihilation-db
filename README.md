@@ -4,7 +4,7 @@ Planetary Annihilation Unit Database
 This is a set of tools for accessing information about the units in Planetary
 Annihilation. It works by parsing the JSON unit descriptions from the
 installed game. Information can be accessed directly from a Python console or
-through a (currently very rudimentary) local web app.
+through a local web app.
 
 ## Requirements ##
 
