@@ -75,8 +75,8 @@ def callback(name):
                     columns=columns,
                     data=data_function(categories))
 
-@route('/')
-def unit_list():
+@route('/table/all')
+def callback():
     table_data = {}
     tables = []
     for group,(caption, columns, data_function, categories) in unit_groups.items():
@@ -96,6 +96,14 @@ def unit_list():
         tables.append(leftover)
 
     return template('unitlist', tables=tables)
+
+@route('/')
+def callback():
+    tables = {}
+    for group,(caption, _, _, categories) in unit_groups.items():
+        tables[group] = get_units(categories)
+
+    return template('all_units_list', **tables)
 
 
 @route('/unit/<name>')

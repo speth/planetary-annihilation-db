@@ -27,6 +27,13 @@ h1
     margin-bottom: 4pt;
 }
 
+h2
+{
+    color: #666666;
+    font-size: 133%;
+    margin-bottom: 2pt;
+}
+
 th
 {
     text-align: left;
@@ -37,20 +44,37 @@ div.heading
     font-weight: bold;
 }
 
+div.columns
+{
+    width: 900px;
+}
+
+div.columns div
+{
+    width: 33%;
+    float: left;
+}
+
+div.clear
+{
+    clear: both;
+}
+
 .num
 {
     text-align: right;
 }
 
-a:link {
+a {
     color: #333399;
     text-decoration: none;
 }
 
-a:visited {
-    color: #333399;
+a:hover {
+    text-decoration: underline;
 }
 
-a:hover {
+a.hlink {
+    color: #666666;
     text-decoration: underline;
 }
