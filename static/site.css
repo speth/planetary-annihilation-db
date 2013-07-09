@@ -3,15 +3,13 @@ body {
     margin: 0px;
 }
 
-table, td, th
-{
+table, td, th {
     border: 1px solid black;
     border-collapse: collapse;
     padding: 4px;
 }
 
-caption
-{
+caption {
     font-weight: bold;
     font-size: 133%;
     text-align: left;
@@ -20,53 +18,44 @@ caption
     padding-top: 12pt;
 }
 
-h1
-{
+h1 {
     color: #666666;
     font-size: 166%;
     margin-bottom: 4pt;
 }
 
-h2
-{
+h2 {
     color: #666666;
     font-size: 133%;
     margin-bottom: 2pt;
 }
 
-th
-{
+th {
     text-align: left;
 }
 
-div.heading
-{
+div.heading {
     font-weight: bold;
 }
 
-div.content
-{
+div.content {
     padding-left: 12px;
 }
 
-div.columns
-{
+div.columns {
     width: 900px;
 }
 
-div.columns div
-{
+div.columns div {
     width: 33%;
     float: left;
 }
 
-div.clear
-{
+div.clear {
     clear: both;
 }
 
-.num
-{
+.num {
     text-align: right;
 }
 
@@ -84,15 +73,13 @@ a.hlink {
     text-decoration: underline;
 }
 
-div.navbar
-{
+div.navbar {
     background-color: #223366;
     color: #ffffff;
     padding: 4px;
     padding-left: 8px;
 }
 
-div.navbar a
-{
+div.navbar a {
     color: #ffffff;
 }
