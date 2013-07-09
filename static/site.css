@@ -1,6 +1,6 @@
 body {
     font-family: sans-serif;
-    padding-left: 12pt;
+    margin: 0px;
 }
 
 table, td, th
@@ -44,6 +44,11 @@ div.heading
     font-weight: bold;
 }
 
+div.content
+{
+    padding-left: 12px;
+}
+
 div.columns
 {
     width: 900px;
@@ -77,4 +82,17 @@ a:hover {
 a.hlink {
     color: #666666;
     text-decoration: underline;
+}
+
+div.navbar
+{
+    background-color: #223366;
+    color: #ffffff;
+    padding: 4px;
+    padding-left: 8px;
+}
+
+div.navbar a
+{
+    color: #ffffff;
 }

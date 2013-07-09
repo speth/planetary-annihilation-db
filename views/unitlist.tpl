@@ -6,8 +6,11 @@
     <link rel="stylesheet" href="/static/site.css">
   </head>
   <body>
-    % for table in tables:
-      {{!table}}
-    % end
+    % include nav_bar
+    <div class="content">
+      % for table in tables:
+        {{!table}}
+      % end
+    </div>
   </body>
 </html>

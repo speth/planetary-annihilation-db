@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/static/site.css">
   </head>
   <body>
+    % include nav_bar
+    <div class="content">
     % if u.name == u.role:
     <h1>{{u.name}}</h1>
     % else:
@@ -115,5 +117,6 @@
       % end
 
     </ul>
+  </div>
   </body>
 </html>
