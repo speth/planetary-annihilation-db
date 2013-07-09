@@ -1,10 +1,24 @@
 % import webunits
-% if u.name == u.role:
-  <h1>{{u.name}}</h1>
-% else:
-  <h1>{{u.role}}: <em>{{u.name}}</em></h1>
-% end
-<em>{{u.description}}</em>
+
+<div style="width: 100%; overflow: hidden;">
+  % if have_icon:
+    <div style="width: 60px; float: left; margin-top:14px">
+      <img src=/icons/{{u.safename}} />
+    </div>
+    <div style="margin-left: 72px;">
+  % else:
+    <div>
+  % end
+      <h1>
+        % if u.name == u.role:
+          {{u.name}}
+        % else:
+          {{u.role}}: <em>{{u.name}}</em>
+        % end
+      </h1>
+      <em>{{u.description}}</em>
+    </div>
+</div>
 <ul>
   <li>HP: {{u.health}}</li>
   <li>Build cost: {{u.build_cost}} metal</li>

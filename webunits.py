@@ -17,9 +17,11 @@ except ImportError:
 
 from bottle import route, run, template, static_file
 
+import os
 import units
 import itertools
 import collections
+
 units.load_units()
 webunits = {u.safename:u for u in units.units.values()
             if u.health > 0 and u.build_cost > 0}
@@ -38,6 +40,11 @@ def timestr(val):
     minutes = val // 60
     seconds = val % 60
     return '{}:{:02}'.format(minutes, seconds)
+
+def get_icon_path(unit_name):
+    filename = '/ui/alpha/live_game/img/build_bar/units/{}.png'.format(unit_name)
+    if os.path.exists(units.PA_ROOT + filename):
+        return filename
 
 unit_cols = ['Name', 'Cost', 'DPS', 'HP']
 def unit_data(restriction):
@@ -108,7 +115,13 @@ def callback():
 
 @route('/unit/<name>')
 def callback(name):
-    return template('unit', u=units.units[name])
+    have_icon = bool(get_icon_path(name))
+    return template('unit', u=units.units[name], have_icon=have_icon)
+
+
+@route('/icons/<name>')
+def callback(name):
+    return static_file(get_icon_path(name), root=units.PA_ROOT)
 
 
 @route('/static/<filename>')
