@@ -26,6 +26,17 @@
     <li>Maximum range: {{max(w.max_range for w in u.weapons)}}</li>
     <li>Total DPS: {{u.dps}}</li>
   % end
+  % if 'Mobile' in u.unit_types:
+    <br />
+    <li><div class='heading'>Physics:</div>
+      <ul>
+        <li>Max speed: {{u.move_speed}}</li>
+        <li>Acceleration: {{u.turn_speed}}</li>
+        <li>Braking rate: {{u.brake}}</li>
+        <li>Turn rate: {{u.turn_speed}}</li>
+      </ul>
+    </li>
+  % end
   % if u.affects_economy:
     <br />
     <li><div class='heading'>Economy:</div>
