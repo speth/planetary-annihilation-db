@@ -51,6 +51,11 @@ def unit_data(restriction):
     return [(u, u.build_cost, u.dps, u.health)
             for u in get_units(restriction)]
 
+mobile_cols = ['Name', 'Cost', 'DPS', 'HP', 'Speed']
+def mobile_data(restriction):
+    return [(u, u.build_cost, u.dps, u.health, u.move_speed)
+            for u in get_units(restriction)]
+
 builder_cols = ['Name', 'Cost', 'Build Rate', 'HP']
 def builder_data(restriction):
     return [(u, u.build_cost, u.build_rate, u.health)
@@ -65,10 +70,10 @@ def econ_data(restriction):
 unit_groups = collections.OrderedDict([
     ('factories', ('Factories', builder_cols, builder_data, 'Factory')),
     ('builders', ('Construction Units', builder_cols, builder_data,'Mobile & Construction')),
-    ('vehicles', ('Vehicles', unit_cols, unit_data, 'Mobile & Tank - Construction')),
-    ('bots', ('Bots', unit_cols, unit_data, 'Mobile & Bot - Construction')),
-    ('air', ('Aircraft', unit_cols, unit_data, 'Mobile & Air - Construction')),
-    ('naval', ('Naval', unit_cols, unit_data, 'Mobile & Naval - Construction')),
+    ('vehicles', ('Vehicles', mobile_cols, mobile_data, 'Mobile & Tank - Construction')),
+    ('bots', ('Bots', mobile_cols, mobile_data, 'Mobile & Bot - Construction')),
+    ('air', ('Aircraft', mobile_cols, mobile_data, 'Mobile & Air - Construction')),
+    ('naval', ('Naval', mobile_cols, mobile_data, 'Mobile & Naval - Construction')),
     ('orbital', ('Orbital', unit_cols, unit_data, 'Orbital - Construction')),
     ('defense', ('Defensive Structures', unit_cols, unit_data, 'Structure & Defense')),
     ('economy', ('Economic Structures', econ_cols, econ_data, 'Structure & Economy')),
