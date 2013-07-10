@@ -95,6 +95,10 @@ class Unit(Thing):
     production = Resources()
     consumption = Resources()
     storage = Resources()
+    move_speed = 0
+    turn_speed = 0
+    acceleration = 0
+    brake = 0
 
     def __init__(self, resource_name):
         super().__init__(resource_name)
@@ -174,6 +178,16 @@ class Unit(Thing):
 
         if not self.safename.startswith('base_'):
             units[self.safename] = self
+
+        nav = self.raw.get('navigation', {})
+        if 'move_speed' in nav:
+            self.move_speed = nav.pop('move_speed')
+        if 'turn_speed' in nav:
+            self.turn_speed = nav.pop('turn_speed')
+        if 'acceleration' in nav:
+            self.acceleration = nav.pop('acceleration')
+        if 'brake' in nav:
+            self.brake = nav.pop('brake')
 
     @property
     def metal_rate(self):
