@@ -100,6 +100,11 @@ class Unit(Thing):
     acceleration = 0
     brake = 0
 
+    vision_radius = 0
+    underwater_vision_radius = 0
+    radar_radius = 0
+    sonar_radius = 0
+
     def __init__(self, resource_name):
         super().__init__(resource_name)
         UNITS[resource_name] = self
@@ -188,6 +193,24 @@ class Unit(Thing):
             self.acceleration = nav.pop('acceleration')
         if 'brake' in nav:
             self.brake = nav.pop('brake')
+
+        try:
+            recon = self.raw['recon']['observer'].pop('items')
+        except KeyError:
+            recon = []
+
+        for item in recon:
+            if item['channel'] == 'sight':
+                if item['layer'] == 'surface_and_air':
+                    self.vision_radius = item['radius']
+                elif item['layer'] == 'underwater':
+                    self.underwater_vision_radius = item['radius']
+            elif item['channel'] == 'radar':
+                if item['layer'] == 'surface_and_air':
+                    self.radar_radius = item['radius']
+                elif item['layer'] == 'underwater':
+                    self.sonar_radius = item['radius']
+
 
     @property
     def metal_rate(self):
