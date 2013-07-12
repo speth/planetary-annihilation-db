@@ -188,6 +188,9 @@ class Unit(Thing):
 
         if not self.safename.startswith('base_'):
             units[self.safename] = self
+            self.base_template = False
+        else:
+            self.base_template = True
 
         nav = self.raw.get('navigation', {})
         if 'move_speed' in nav:
@@ -374,13 +377,16 @@ def get_restriction(text):
 
 def build_build_tree():
     for unit in UNITS.values():
+        if unit.base_template:
+            continue
+
         if unit.buildable_types:
             r = get_restriction(unit.buildable_types)
         else:
             continue
 
         for other in UNITS.values():
-            if r.satisfies(other):
+            if not other.base_template and r.satisfies(other):
                 unit.builds.add(other)
                 other.built_by.add(unit)
 
