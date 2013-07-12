@@ -109,6 +109,9 @@
       % if w.splash_damage:
         <li>Splash: {{w.splash_damage}} damage, radius {{w.splash_radius}}</li>
       % end
+      % if w.muzzle_velocity:
+        <li>Muzzle velocity: {{w.muzzle_velocity}}</li>
+      % end
       % if w.metal_per_shot:
         <li>Metal consumption: {{w.metal_per_shot}} per shot ({{w.metal_per_shot * w.rof}} per second)</li>
       % end
