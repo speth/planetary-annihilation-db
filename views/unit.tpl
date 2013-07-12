@@ -91,6 +91,9 @@
         % if u.tool_consumption.energy:
           <li>Fabrication energy consumption: {{u.tool_consumption.energy}} / s</li>
         % end
+        % if u.tool_consumption.metal:
+          <li>Energy consumption per metal: {{'{:.1f}'.format(u.build_inefficiency)}}</li>
+        % end
       </ul>
     </li>
   % end

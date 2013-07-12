@@ -88,6 +88,7 @@ class Unit(Thing):
     unit_types = ()
     buildable_types = ''
     build_cost = 0
+    build_inefficiency = 0
     health = 0
     weapons = ()
     build_arms = ()
@@ -175,6 +176,10 @@ class Unit(Thing):
             self.tool_consumption.metal += tool.metal_consumption
             self.tool_consumption.energy += tool.energy_consumption
             self.build_rate += tool.metal_consumption
+
+        if self.tool_consumption.metal:
+            self.build_inefficiency = (self.tool_consumption.energy /
+                                       self.tool_consumption.metal)
 
         self.weapon_consumption = Resources()
         for weapon in self.weapons:

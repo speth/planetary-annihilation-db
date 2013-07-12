@@ -56,9 +56,10 @@ def mobile_data(restriction):
     return [(u, u.build_cost, u.dps, u.health, u.move_speed)
             for u in get_units(restriction)]
 
-builder_cols = ['Name', 'Cost', 'Build Rate', 'HP']
+builder_cols = ['Name', 'Cost', 'HP', 'Build Rate', 'Build Energy', 'Energy per Metal']
 def builder_data(restriction):
-    return [(u, u.build_cost, u.build_rate, u.health)
+    return [(u, u.build_cost, u.health, u.build_rate, u.tool_consumption.energy,
+             '{:.1f}'.format(u.build_inefficiency))
             for u in get_units(restriction)]
 
 econ_cols = ['Name', 'Cost', 'HP', 'M Rate', 'E Rate', 'M Storage', 'E Storage']
