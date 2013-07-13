@@ -1,5 +1,6 @@
 import json
 import pprint
+import collections
 
 try:
     config = json.load(open('padb.json'))
@@ -27,7 +28,7 @@ AMMO = {}
 THINGS = {}
 
 # for inspection, using a friendly name
-units = {}
+units = collections.OrderedDict()
 weapons = {}
 
 class Resources:
@@ -186,11 +187,7 @@ class Unit(Thing):
             self.weapon_consumption.metal -= weapon.metal_rate
             self.weapon_consumption.energy -= weapon.energy_rate
 
-        if not self.safename.startswith('base_'):
-            units[self.safename] = self
-            self.base_template = False
-        else:
-            self.base_template = True
+        self.base_template = self.safename.startswith('base_')
 
         nav = self.raw.get('navigation', {})
         if 'move_speed' in nav:
@@ -376,9 +373,11 @@ def get_restriction(text):
         return SimpleRestriction(text)
 
 def build_build_tree():
-    for unit in UNITS.values():
+    for unit in sorted(UNITS.values(), key=lambda u: (u.build_cost, u.name)):
         if unit.base_template:
             continue
+
+        units[unit.safename] = unit
 
         if unit.buildable_types:
             r = get_restriction(unit.buildable_types)
