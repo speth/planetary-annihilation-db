@@ -20,6 +20,7 @@ with the path to the Planetary Annihilation 'media' directory:
     raise
 
 PA_ROOT = config['pa_root']
+PA_VERSION = config.get('pa_version', 'unknown')
 
 # internal use, keyed by resource_name
 UNITS = {}
