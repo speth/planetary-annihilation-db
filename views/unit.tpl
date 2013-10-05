@@ -3,7 +3,7 @@
 <div style="width: 100%; overflow: hidden;">
   % if have_icon:
     <div style="width: 60px; float: left; margin-top:14px">
-      <img src=/icons/{{u.safename}} />
+      <img src=/build_icons/{{u.safename}} />
     </div>
     <div style="margin-left: 72px;">
   % else:

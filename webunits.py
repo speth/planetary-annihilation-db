@@ -125,7 +125,7 @@ def callback(name):
     return template('unit', u=units.units[name], have_icon=have_icon)
 
 
-@route('/icons/<name>')
+@route('/build_icons/<name>')
 def callback(name):
     return static_file(get_icon_path(name), root=units.PA_ROOT)
 
