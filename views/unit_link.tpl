@@ -1,3 +1,4 @@
+<span class="tier">T{{unit.tier}}</span>
 <a href="/unit/{{unit.safename}}">
   % if unit.name == unit.role:
     {{unit.name}}

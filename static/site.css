@@ -83,3 +83,9 @@ div.navbar {
 div.navbar a {
     color: #ffffff;
 }
+
+span.tier {
+    color: #666666;
+    font-size: 75%;
+    vertical-align: middle;
+}

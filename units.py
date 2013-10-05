@@ -103,6 +103,7 @@ class Unit(Thing):
     turn_speed = 0
     acceleration = 0
     brake = 0
+    tier = 0
 
     vision_radius = 0
     underwater_vision_radius = 0
@@ -122,6 +123,11 @@ class Unit(Thing):
             for unit_type in self.raw.pop('unit_types'):
                 assert unit_type.startswith('UNITTYPE_')
                 self.unit_types.add(unit_type[9:])
+
+        if 'Basic' in self.unit_types:
+            self.tier = 1
+        elif 'Advanced' in self.unit_types:
+            self.tier = 2
 
         if 'buildable_types' in self.raw:
             self.buildable_types = self.raw.pop('buildable_types')
