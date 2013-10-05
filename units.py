@@ -63,6 +63,7 @@ class Thing:
 
         self.resource_name = resource_name
         self.raw = raw
+        THINGS[self.resource_name] = self
 
     @property
     def safename(self):
@@ -296,6 +297,7 @@ class Ammo(Thing):
     muzzle_velocity = 0
     max_velocity = 0
     lifetime = 0
+    metal_cost = 0
 
     def __init__(self, resource_name):
         super().__init__(resource_name)
@@ -314,6 +316,8 @@ class Ammo(Thing):
             self.max_velocity = self.raw.pop('max_velocity')
         if 'lifetime' in self.raw:
             self.lifetime = self.raw.pop('lifetime')
+        if 'build_metal_cost' in self.raw:
+            self.metal_cost = self.raw.pop('build_metal_cost')
 
     def __repr__(self):
         return '<Ammo: {!r}>'.format(self.name)

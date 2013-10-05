@@ -121,6 +121,10 @@
       % if w.energy_per_shot:
         <li>Energy consumption: {{w.energy_per_shot}} per shot ({{w.energy_per_shot * w.rof}} per second)</li>
       % end
+      % if w.ammo and w.ammo.metal_cost:
+        <li>Metal cost: {{w.ammo.metal_cost}} per shot</li>
+        <li>Build time: {{webunits.timestr(w.ammo.metal_cost / u.build_rate)}}</li>
+      % end
     </ul>
   % end
   % if u.builds:
