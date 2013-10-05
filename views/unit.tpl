@@ -108,7 +108,7 @@
     % end
     <ul>
       <li>Range: {{w.max_range}}</li>
-      <li>Damage: {{w.dps}} DPS: {{w.damage}} damage every {{1/w.rof}} seconds ({{w.rof}} shots per second)</li>
+      <li>Damage: {{w.dps}} DPS: {{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{w.rof}} shots per second)</li>
       % if w.splash_damage:
         <li>Splash: {{w.splash_damage}} damage, radius {{w.splash_radius}}</li>
       % end
