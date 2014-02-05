@@ -351,7 +351,7 @@ class BuildArm(Thing):
 
 class SimpleRestriction:
     def __init__(self, category):
-        self.category = category.strip()
+        self.category = category
 
     def satisfies(self, unit):
         return self.category in unit.unit_types
@@ -373,15 +373,54 @@ class CompoundMinus(CompoundRestriction):
     def satisfies(self, unit):
         return self.left.satisfies(unit) and not self.right.satisfies(unit)
 
-def get_restriction(text):
-    if '|' in text:
-        return CompoundOr(*map(get_restriction, text.split('|', 1)))
-    elif '&' in text:
-        return CompoundAnd(*map(get_restriction, text.split('&', 1)))
-    elif '-' in text:
-        return CompoundMinus(*map(get_restriction, text.rsplit('-', 1)))
+
+def _restriction(R):
+    if '|' in R:
+        i = R.index('|')
+        return CompoundOr(_restriction(R[:i]), _restriction(R[i+1:]))
+    elif '&' in R:
+        i = R.index('&')
+        return CompoundAnd(_restriction(R[:i]), _restriction(R[i+1:]))
+    elif '-' in R:
+        i = len(R) - list(reversed(R)).index('-') - 1
+        return CompoundMinus(_restriction(R[:i]), _restriction(R[i+1:]))
     else:
-        return SimpleRestriction(text)
+        assert len(R) == 1, R
+        if isinstance(R[0], str):
+            return SimpleRestriction(R[0])
+        else:
+            return _restriction(R[0])
+
+def get_restriction(text):
+    special = set('|&-() ')
+    # first pass: tokenize
+    tokens = []
+    word = []
+    for c in text + ' ':
+        if c in special:
+            w = ''.join(word).strip()
+            word = []
+            if w:
+                tokens.append(w)
+            if c != ' ':
+                tokens.append(c)
+        else:
+            word.append(c)
+
+    # second pass: parse parentheses
+    stack = []
+    current = []
+    for c in tokens:
+        if c == '(':
+            stack.append(current)
+            current = []
+        elif c == ')':
+            stack[-1].append(current)
+            current = stack.pop()
+        else:
+            current.append(c)
+    return _restriction(current)
+
 
 def build_build_tree():
     for unit in sorted(UNITS.values(), key=lambda u: (u.build_cost, u.name)):
