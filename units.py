@@ -356,22 +356,38 @@ class SimpleRestriction:
     def satisfies(self, unit):
         return self.category in unit.unit_types
 
+    def __str__(self):
+        return str(self.category)
+
+
 class CompoundRestriction:
     def __init__(self, left, right):
         self.left = left
         self.right = right
 
+
 class CompoundAnd(CompoundRestriction):
     def satisfies(self, unit):
         return self.left.satisfies(unit) and self.right.satisfies(unit)
+
+    def __str__(self):
+        return '({} & {})'.format(self.left, self.right)
+
 
 class CompoundOr(CompoundRestriction):
     def satisfies(self, unit):
         return self.left.satisfies(unit) or self.right.satisfies(unit)
 
+    def __str__(self):
+        return '({} | {})'.format(self.left, self.right)
+
+
 class CompoundMinus(CompoundRestriction):
     def satisfies(self, unit):
         return self.left.satisfies(unit) and not self.right.satisfies(unit)
+
+    def __str__(self):
+        return '({} - {})'.format(self.left, self.right)
 
 
 def _restriction(R):
