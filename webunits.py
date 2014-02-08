@@ -22,8 +22,9 @@ import units
 import itertools
 import collections
 
-units.load_units()
-webunits = {u.safename:u for u in units.units.values()
+db = units.VersionDb('current')
+db.load_units()
+webunits = {u.safename:u for u in db.units.values()
             if u.health > 0 and u.build_cost > 0}
 sorted_units = sorted(webunits.values(), key=lambda u: u.build_cost)
 
@@ -122,7 +123,7 @@ def callback():
 @route('/unit/<name>')
 def callback(name):
     have_icon = bool(get_icon_path(name))
-    return template('unit', u=units.units[name], have_icon=have_icon)
+    return template('unit', u=db.units[name], have_icon=have_icon)
 
 
 @route('/build_icons/<name>')

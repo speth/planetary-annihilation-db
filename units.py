@@ -12,7 +12,8 @@ in the current directory with an entry in the following format,
 with the path to the Planetary Annihilation 'media' directory:
 
 {
-    "pa_root": "C:/Path/To/PlanetaryAnnihilation/PA/media"
+    "pa_root": "C:/Path/To/PlanetaryAnnihilation/PA/media",
+    "versions": ["current": ""]
 }
 
 ****************************************************************
@@ -20,17 +21,52 @@ with the path to the Planetary Annihilation 'media' directory:
     raise
 
 PA_ROOT = config['pa_root']
-PA_VERSION = config.get('pa_version', 'unknown')
 
-# internal use, keyed by resource_name
-UNITS = {}
-WEAPONS = {}
-AMMO = {}
-THINGS = {}
+class VersionDb:
+    def __init__(self, version, root=''):
+        self.version = version
 
-# for inspection, using a friendly name
-units = collections.OrderedDict()
-weapons = {}
+        # Directory containing the 'pa' and 'ui' subdirectories, relative to PA_ROOT
+        self.root = PA_ROOT + root
+
+        # internal use, keyed by resource_name
+        self._units = {}
+        self._things = {}
+
+        # for inspection, using a friendly name
+        self.units = collections.OrderedDict()
+        self.weapons = {}
+
+    def build_build_tree(self):
+        for unit in sorted(self._units.values(), key=lambda u: (u.build_cost, u.name)):
+            if unit.base_template:
+                continue
+
+            self.units[unit.safename] = unit
+
+            if unit.buildable_types:
+                r = get_restriction(unit.buildable_types)
+            else:
+                continue
+
+            for other in self._units.values():
+                if not other.base_template and r.satisfies(other):
+                    unit.builds.add(other)
+                    other.built_by.add(unit)
+
+    def load_units(self):
+        unitlist = json.load(open(self.root + '/pa/units/unit_list.json'))['units']
+        for u in unitlist:
+            Unit(self, u)
+        self.build_build_tree()
+
+    def report(self):
+        print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
+        print('{0:>30s}  {1:>7s}  {2:>7s}  {2:>7s}'.format('-'*20, *['-'*7]*3))
+        for unit in sorted(self.units.values(), key=lambda u: u.role):
+            if unit.health > 0:
+                print('{0.role:>30s}  {0.health:7.1f}  {0.dps:7.1f}  {0.salvo_damage:7.1f}'.format(unit))
+
 
 class Resources:
     def __init__(self, metal=0, energy=0):
@@ -52,18 +88,20 @@ class Resources:
 class Thing:
     base = None
 
-    def __init__(self, resource_name):
-        with open(PA_ROOT + resource_name) as datafile:
+    def __init__(self, db, resource_name):
+        self.db = db
+
+        with open(db.root + resource_name) as datafile:
             raw = json.load(datafile)
 
         if 'base_spec' in raw:
-            base = self.__class__(raw['base_spec'])
+            base = self.__class__(self.db, raw['base_spec'])
             self.__dict__.update(base.__dict__)
             self.base = base
 
         self.resource_name = resource_name
         self.raw = raw
-        THINGS[self.resource_name] = self
+        self.db._things[self.resource_name] = self
 
     @property
     def safename(self):
@@ -110,9 +148,9 @@ class Unit(Thing):
     radar_radius = 0
     sonar_radius = 0
 
-    def __init__(self, resource_name):
-        super().__init__(resource_name)
-        UNITS[resource_name] = self
+    def __init__(self, db, resource_name):
+        super().__init__(db, resource_name)
+        db._units[resource_name] = self
 
         self.name = self.raw.pop('display_name', self.safename)
         self.role = self.raw.pop('unit_name', self.name)
@@ -149,11 +187,11 @@ class Unit(Thing):
                 tool_name = resource.rsplit('/')[-1].split('.')[0]
                 try:
                     if 'weapon' in tool_name:
-                        self.weapons.append(Weapon(resource))
+                        self.weapons.append(Weapon(self.db, resource))
                     elif 'build_arm' in tool_name:
-                        self.build_arms.append(BuildArm(resource))
+                        self.build_arms.append(BuildArm(self.db, resource))
                     else:
-                        self.misc_tools.append(Thing(resource))
+                        self.misc_tools.append(Thing(self.db, resource))
                 except IOError:
                         pass
 
@@ -259,9 +297,8 @@ class Weapon(Thing):
     energy_per_shot = 0
     ammo_demand = 0
 
-    def __init__(self, resource_name):
-        super().__init__(resource_name)
-        WEAPONS[resource_name] = self
+    def __init__(self, db, resource_name):
+        super().__init__(db, resource_name)
 
         if 'rate_of_fire' in self.raw:
             self.rof = self.raw.pop('rate_of_fire')
@@ -269,7 +306,7 @@ class Weapon(Thing):
 
         ammo_id = self.raw.pop('ammo_id', None)
         if ammo_id:
-            self.ammo = Ammo(ammo_id)
+            self.ammo = Ammo(self.db, ammo_id)
             self.damage = self.ammo.damage + self.ammo.splash_damage
             self.dps = self.rof * self.damage
             self.muzzle_velocity = self.ammo.muzzle_velocity
@@ -305,9 +342,8 @@ class Ammo(Thing):
     lifetime = 0
     metal_cost = 0
 
-    def __init__(self, resource_name):
-        super().__init__(resource_name)
-        AMMO[resource_name] = self
+    def __init__(self, db, resource_name):
+        super().__init__(db, resource_name)
 
         self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
         if 'damage' in self.raw:
@@ -333,8 +369,8 @@ class BuildArm(Thing):
     metal_consumption = 0
     energy_consumption = 0
 
-    def __init__(self, resource_name):
-        super().__init__(resource_name)
+    def __init__(self, db, resource_name):
+        super().__init__(db, resource_name)
 
         self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
         demand = self.raw.pop('construction_demand', {})
@@ -438,36 +474,7 @@ def get_restriction(text):
     return _restriction(current)
 
 
-def build_build_tree():
-    for unit in sorted(UNITS.values(), key=lambda u: (u.build_cost, u.name)):
-        if unit.base_template:
-            continue
-
-        units[unit.safename] = unit
-
-        if unit.buildable_types:
-            r = get_restriction(unit.buildable_types)
-        else:
-            continue
-
-        for other in UNITS.values():
-            if not other.base_template and r.satisfies(other):
-                unit.builds.add(other)
-                other.built_by.add(unit)
-
-def load_units():
-    unitlist = json.load(open(PA_ROOT + '/pa/units/unit_list.json'))['units']
-    for u in unitlist:
-        Unit(u)
-    build_build_tree()
-
-def report():
-    print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
-    print('{0:>30s}  {1:>7s}  {2:>7s}  {2:>7s}'.format('-'*20, *['-'*7]*3))
-    for unit in sorted(units.values(), key=lambda u: u.role):
-        if unit.health > 0:
-            print('{0.role:>30s}  {0.health:7.1f}  {0.dps:7.1f}  {0.salvo_damage:7.1f}'.format(unit))
-
 if __name__ == '__main__':
-    load_units()
-    report()
+    pass
+#    load_units()
+#    report()

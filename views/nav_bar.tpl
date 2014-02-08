@@ -15,7 +15,7 @@
     <a href="/table/other">Other</a>
   </div>
   <div style="float:right; color: #AAAAAA">
-    {{webunits.units.PA_VERSION}}
+    {{webunits.db.version}}
   </div>
   <div style="clear:both"></div>
 </div>
