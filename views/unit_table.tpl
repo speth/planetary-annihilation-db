@@ -10,7 +10,7 @@
   % for row in data:
   <tr>
     <td>
-      % include unit_link unit=row[0]
+      % include unit_link unit=row[0], version=version
     </td>
 
     % for item in row[1:]:

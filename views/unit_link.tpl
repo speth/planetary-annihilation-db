@@ -1,5 +1,9 @@
 <span class="tier">T{{unit.tier}}</span>
-<a href="/unit/{{unit.safename}}">
+  % if version == 'current':
+	<a href="/unit/{{unit.safename}}">
+  % else:
+    <a href="/unit/{{unit.safename}}?version={{version}}">
+  % end
   % if unit.name == unit.role:
     {{unit.name}}
   % else:

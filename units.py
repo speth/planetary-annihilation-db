@@ -1,9 +1,10 @@
 import json
 import pprint
 import collections
+import os
 
 try:
-    config = json.load(open('padb.json'))
+    CONFIG = json.load(open('padb.json'))
 except IOError:
     print("""
 ****************************************************************
@@ -20,14 +21,17 @@ with the path to the Planetary Annihilation 'media' directory:
 """)
     raise
 
-PA_ROOT = config['pa_root']
+CONFIG['pa_root']
 
 class VersionDb:
-    def __init__(self, version, root=''):
+    def __init__(self, version='current'):
         self.version = version
 
-        # Directory containing the 'pa' and 'ui' subdirectories, relative to PA_ROOT
-        self.root = PA_ROOT + root
+        # Directory containing the 'pa' and 'ui' subdirectories
+        if version == 'current':
+            self.root = CONFIG['pa_root']
+        else:
+            self.root = os.path.join(CONFIG['archive_root'], CONFIG['versions'][version])
 
         # internal use, keyed by resource_name
         self._units = {}
@@ -473,8 +477,12 @@ def get_restriction(text):
             current.append(c)
     return _restriction(current)
 
+def load_all():
+    dbs = {v: VersionDb(v) for v in CONFIG['versions']}
+    dbs['current'] = VersionDb()
+    for db in dbs.values():
+        db.load_units()
+    return dbs
 
 if __name__ == '__main__':
-    pass
-#    load_units()
-#    report()
+    dbs = load_all()

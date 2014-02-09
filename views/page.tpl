@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/static/site.css">
   </head>
   <body>
-    % include nav_bar
+    % include nav_bar version=version
     <div class="content">
       % include
     </div>

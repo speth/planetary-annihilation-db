@@ -1,2 +1,2 @@
-% include unit_table caption=caption, columns=columns, data=data
-% rebase page title=caption
+% include unit_table caption=caption, columns=columns, data=data, version=version
+% rebase page title=caption, version=version
