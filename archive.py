@@ -16,11 +16,13 @@ def save_db_info(archive_name):
             archive.add(pa_root + filename,
                         arcname=archive_root + filename)
 
+        path_tmpl = '/ui/{}/live_game/img/build_bar/units/{}.png'
         for unit in db.units.values():
-            iconpath = '/ui/alpha/live_game/img/build_bar/units/{}.png'.format(unit.safename)
-            if os.path.exists(pa_root + iconpath):
-                archive.add(pa_root + iconpath,
-                            arcname=archive_root + iconpath)
+            for directory in ('main/game', 'alpha'):
+                iconpath = path_tmpl.format(directory, unit.safename)
+                if os.path.exists(pa_root + iconpath):
+                    archive.add(pa_root + iconpath,
+                                arcname=archive_root + iconpath)
 
 if __name__ == '__main__':
     import sys

@@ -49,9 +49,11 @@ class WebUnits:
                 yield u
 
     def get_icon_path(self, unit_name):
-        filename = '/ui/alpha/live_game/img/build_bar/units/{}.png'.format(unit_name)
-        if os.path.exists(self.db.root + filename):
-            return filename
+        path_tmpl = '/ui/{}/live_game/img/build_bar/units/{}.png'
+        for directory in ('main/game', 'alpha'):
+            filename = path_tmpl.format(directory, unit_name)
+            if os.path.exists(self.db.root + filename):
+                return filename
 
     unit_cols = ['Name', 'Cost', 'DPS', 'HP']
     def unit_data(self, restriction):
