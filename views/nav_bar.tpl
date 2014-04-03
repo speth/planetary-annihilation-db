@@ -15,7 +15,7 @@
     <a href="/table/other{{suffix}}">Other</a>
   </div>
   <div style="float:right; color: #AAAAAA">
-    {{webunits.db.version}}
+    {{version}}
   </div>
   <div style="clear:both"></div>
 </div>
