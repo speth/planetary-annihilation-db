@@ -3,23 +3,23 @@ import tarfile
 import os
 
 def save_db_info(archive_name):
+    pa_root = units.CONFIG['pa_root']
     archive_root = 'padb-data'
-    if not units.THINGS:
-        units.load_units()
+    db = units.VersionDb()
+    db.load_units()
 
     with tarfile.open(archive_name, 'w:bz2') as archive:
-        archive.add(units.PA_ROOT + '/pa/units/unit_list.json',
+        archive.add(pa_root + '/pa/units/unit_list.json',
                     arcname=archive_root + '/pa/units/unit_list.json')
 
-        for filename in units.THINGS:
-            archive.add(units.PA_ROOT + filename,
+        for filename in db._things:
+            archive.add(pa_root + filename,
                         arcname=archive_root + filename)
 
-        for unit in units.UNITS.values():
-
+        for unit in db.units.values():
             iconpath = '/ui/alpha/live_game/img/build_bar/units/{}.png'.format(unit.safename)
-            if os.path.exists(units.PA_ROOT + iconpath):
-                archive.add(units.PA_ROOT + iconpath,
+            if os.path.exists(pa_root + iconpath):
+                archive.add(pa_root + iconpath,
                             arcname=archive_root + iconpath)
 
 if __name__ == '__main__':

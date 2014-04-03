@@ -21,8 +21,6 @@ with the path to the Planetary Annihilation 'media' directory:
 """)
     raise
 
-CONFIG['pa_root']
-
 class VersionDb:
     def __init__(self, version='current'):
         self.version = version
@@ -479,7 +477,9 @@ def get_restriction(text):
 
 def load_all():
     dbs = {v: VersionDb(v) for v in CONFIG['versions']}
-    dbs['current'] = VersionDb()
+    if 'pa_root' in CONFIG:
+        dbs['current'] = VersionDb()
+
     for db in dbs.values():
         db.load_units()
     return dbs
