@@ -25,6 +25,7 @@ import collections
 class WebUnits:
     def __init__(self, db):
         self.db = db
+        self.version = self.db.version
         self.units = {u.safename:u for u in db.units.values()
                       if u.health > 0 and u.build_cost > 0}
         self.sorted_units = sorted(self.units.values(), key=lambda u: u.build_cost)
@@ -101,7 +102,7 @@ def callback(name):
                     caption=caption,
                     columns=columns,
                     data=data_function(categories),
-                    version=version)
+                    version=db.version)
 
 @route('/table/all')
 def callback():
@@ -113,7 +114,7 @@ def callback():
         table_data[group] = data_function(categories)
         tables.append(template('unit_table', caption=caption,
                                columns=columns, data=table_data[group],
-                               version=version))
+                               version=db.version))
 
     # Check to make sure we didn't forget anything important
     other2 = set(db.units.values())
@@ -123,10 +124,10 @@ def callback():
     if other2:
         leftover_data = [(u, u.build_cost, u.dps, u.health) for u in other2]
         leftover = template('unit_table', caption='Uncategorized Units',
-                            columns=unit_cols, data=leftover_data, version=version)
+                            columns=unit_cols, data=leftover_data, version=db.version)
         tables.append(leftover)
 
-    return template('unitlist', version=version, tables=tables)
+    return template('unitlist', version=db.version, tables=tables)
 
 @route('/')
 def callback():
@@ -136,7 +137,7 @@ def callback():
     for group,(caption, _, _, categories) in db.unit_groups.items():
         tables[group] = db.get_units(categories)
 
-    return template('all_units_list', version=version, **tables)
+    return template('all_units_list', version=db.version, **tables)
 
 
 @route('/unit/<name>')
@@ -144,7 +145,7 @@ def callback(name):
     version = request.query.version or 'current'
     db = dbs[version]
     have_icon = bool(db.get_icon_path(name))
-    return template('unit', u=db.units[name], have_icon=have_icon, version=version)
+    return template('unit', u=db.units[name], have_icon=have_icon, version=db.version)
 
 
 @route('/build_icons/<name>')

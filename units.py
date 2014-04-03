@@ -477,11 +477,15 @@ def get_restriction(text):
 
 def load_all():
     dbs = {v: VersionDb(v) for v in CONFIG['versions']}
-    if 'pa_root' in CONFIG:
-        dbs['current'] = VersionDb()
 
     for db in dbs.values():
         db.load_units()
+
+    if 'pa_root' in CONFIG:
+        dbs['current'] = VersionDb()
+    else:
+        dbs['current'] = sorted(dbs.items())[-1][1]
+
     return dbs
 
 if __name__ == '__main__':
