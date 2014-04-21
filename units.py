@@ -30,7 +30,6 @@ class VersionDb:
             self.root = CONFIG['pa_root']
         else:
             self.root = os.path.join(CONFIG['archive_root'], CONFIG['versions'][version])
-
         # internal use, keyed by resource_name
         self._units = {}
         self._things = {}
@@ -476,13 +475,14 @@ def get_restriction(text):
     return _restriction(current)
 
 def load_all():
-    dbs = {v: VersionDb(v) for v in CONFIG['versions']}
+    dbs = {v: VersionDb(v) for v in CONFIG.get('versions', ())}
 
     for db in dbs.values():
         db.load_units()
 
     if 'pa_root' in CONFIG:
         dbs['current'] = VersionDb()
+        dbs['current'].load_units()
     else:
         dbs['current'] = sorted(dbs.items())[-1][1]
 
