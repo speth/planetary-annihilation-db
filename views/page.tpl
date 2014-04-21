@@ -7,6 +7,7 @@
     % else:
       <title>PADB</title>
     % end
+    <link rel="stylesheet" href="/static/flatly.css">
     <link rel="stylesheet" href="/static/site.css">
   </head>
   <body>

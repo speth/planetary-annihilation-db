@@ -1,6 +1,5 @@
 body {
-    font-family: sans-serif;
-    margin: 0px;
+    padding-top: 50px;
 }
 
 table, td, th {
@@ -71,17 +70,6 @@ a:hover {
 a.hlink {
     color: #666666;
     text-decoration: underline;
-}
-
-div.navbar {
-    background-color: #223366;
-    color: #ffffff;
-    padding: 4px;
-    padding-left: 8px;
-}
-
-div.navbar a {
-    color: #ffffff;
 }
 
 span.tier {
