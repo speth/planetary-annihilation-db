@@ -2,19 +2,8 @@ body {
     padding-top: 50px;
 }
 
-table, td, th {
-    border: 1px solid black;
-    border-collapse: collapse;
-    padding: 4px;
-}
-
-caption {
-    font-weight: bold;
-    font-size: 133%;
-    text-align: left;
-    color: #666666;
-    padding-bottom: 4pt;
-    padding-top: 12pt;
+table.table-nonfluid {
+    width: auto;
 }
 
 h1 {
@@ -27,10 +16,6 @@ h2 {
     color: #666666;
     font-size: 133%;
     margin-bottom: 2pt;
-}
-
-th {
-    text-align: left;
 }
 
 div.heading {
@@ -58,7 +43,7 @@ div.clear {
     text-align: right;
 }
 
-a {
+a, table a, .table a {
     color: #333399;
     text-decoration: none;
 }
