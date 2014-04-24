@@ -87,8 +87,8 @@ def timestr(val):
     return '{}:{:02}'.format(minutes, seconds)
 
 
-dbs = {}
-for version,db in units.load_all().items():
+dbs = collections.OrderedDict()
+for version,db in sorted(units.load_all().items()):
     dbs[version] = WebUnits(db)
 
 

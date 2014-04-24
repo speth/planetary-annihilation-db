@@ -17,7 +17,18 @@
       <li><a href="/table/other{{suffix}}">Other</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><p class="navbar-text">{{version}}</p></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{version}}<b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          % for v in webunits.dbs:
+            % if v == 'current':
+              <li><a href="{{webunits.request.fullpath}}">{{v}}</a></li>
+            % else:
+              <li><a href="{{webunits.request.fullpath}}?version={{v}}">{{v}}</a></li>
+            % end
+          % end
+        </ul>
+      </li>
     </ul>
   </div>
   </div>
