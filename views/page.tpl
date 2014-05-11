@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/static/site.css">
   </head>
   <body>
-    % include nav_bar version=version
+    % include nav_bar version=version, unit=get('unit')
     <div class="content">
       % include
     </div>

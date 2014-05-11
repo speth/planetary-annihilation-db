@@ -1,4 +1,5 @@
 % import webunits
+% import urllib
 % suffix = '?version='+version if version != 'current' else ''
 <div class="navbar navbar-default navbar-fixed-top">
   <div class="container-fluid">
@@ -25,6 +26,17 @@
           <li><a href="/table/other{{suffix}}">Other</a></li>
         </ul>
       </li>
+      % q = {}
+      % if unit:
+      %   q['u1'] = unit.safename
+      %   q['u2'] = unit.safename
+      % end
+      % if version != 'current':
+      %   q['v1'] = version
+      %   q['v2'] = version
+      % end
+      <li><a href="/compare?{{urllib.parse.urlencode(q)}}">Compare</a></li>
+
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">

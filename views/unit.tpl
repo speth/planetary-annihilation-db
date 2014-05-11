@@ -26,4 +26,4 @@
     % include unit_stats_builtby u=u, version=version
   % end
 </ul>
-% rebase page version=version
+% rebase page version=version, unit=u

@@ -42,6 +42,10 @@ class WebUnits:
             ('economy', ('Economic Structures', self.econ_cols, self.econ_data, 'Structure & Economy')),
             ('other', ('Other Structures', self.unit_cols, self.unit_data, 'Structure - Defense - Factory - Economy'))])
 
+        for category, data in self.unit_groups.items():
+            for unit in self.get_units(data[3]):
+                unit.web_category = category
+
     def get_units(self, restriction):
         """ Get the units that match the specified category restriction """
         R = units.get_restriction(restriction)
@@ -146,6 +150,32 @@ def callback(name):
     db = dbs[version]
     have_icon = bool(db.get_icon_path(name))
     return template('unit', u=db.units[name], have_icon=have_icon, version=db.version)
+
+
+@route('/compare')
+def callback():
+    v1 = request.query.v1 or 'current'
+    v2 = request.query.v2 or 'current'
+    db1 = dbs[v1]
+    db2 = dbs[v2]
+    u1 = db1.units[request.query.u1 or 'land_scout']
+    u2 = db2.units[request.query.u2 or 'land_scout']
+    cat1 = request.query.cat1 or u1.web_category
+    cat2 = request.query.cat2 or u2.web_category
+
+    if cat1 != u1.web_category:
+        u1 = next(db1.get_units(db1.unit_groups[cat1][3]))
+    if cat2 != u2.web_category:
+        u2 = next(db2.get_units(db2.unit_groups[cat2][3]))
+
+    have_icon1 = bool(dbs[v1].get_icon_path(u1.safename))
+    have_icon2 = bool(dbs[v2].get_icon_path(u2.safename))
+    return template('compare', version=v1, request=request,
+                    db1=db1, db2=db2,
+                    u1=u1, u2=u2,
+                    v1=v1, v2=v2,
+                    cat1=cat1, cat2=cat2,
+                    have_icon1=have_icon1, have_icon2=have_icon2)
 
 
 @route('/build_icons/<name>')
