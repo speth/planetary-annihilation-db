@@ -1,3 +1,4 @@
+% import webunits
 % for i, w in enumerate(u.weapons):
   % if len(u.weapons) > 1:
     <li><div class='heading'>Weapon {{i+1}}:</div></li>
