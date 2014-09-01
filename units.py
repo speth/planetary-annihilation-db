@@ -307,6 +307,9 @@ class Weapon(Thing):
 
         ammo_id = self.raw.pop('ammo_id', None)
         if ammo_id:
+            if not isinstance(ammo_id, str):
+                # Weird inconsistency with assault_bot_tool_weapon in 71459
+                ammo_id = ammo_id[0]['id']
             self.ammo = Ammo(self.db, ammo_id)
             self.damage = self.ammo.damage + self.ammo.splash_damage
             self.dps = self.rof * self.damage
