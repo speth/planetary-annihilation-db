@@ -143,6 +143,7 @@ class Unit(Thing):
     acceleration = 0
     brake = 0
     tier = 0
+    variant = False
 
     vision_radius = 0
     underwater_vision_radius = 0
@@ -262,6 +263,18 @@ class Unit(Thing):
                     self.radar_radius = item['radius']
                 elif item['layer'] == 'underwater':
                     self.sonar_radius = item['radius']
+
+        # identify variant commanders; "Alpha Commander" is assumed to be canonical
+        if self.safename == 'imperial_alpha':
+            self.variant = False
+        else:
+            base = self.base
+            while base is not None:
+                if base.safename == 'base_commander':
+                    self.variant = True
+                    break
+                else:
+                    base = base.base
 
 
     @property
