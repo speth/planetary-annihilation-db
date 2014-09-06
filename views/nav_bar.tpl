@@ -40,7 +40,7 @@
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{version}}<b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{version}}<b class="caret"></b></a>
         <ul class="dropdown-menu">
           % for v in webunits.dbs:
             % if v == 'current':
