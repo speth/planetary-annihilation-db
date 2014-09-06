@@ -22,6 +22,10 @@ import units
 import itertools
 import collections
 
+def show_variants():
+    return bool(int(request.get_cookie("show_commander_variants", '0')))
+
+
 class WebUnits:
     def __init__(self, db):
         self.db = db
@@ -43,14 +47,14 @@ class WebUnits:
             ('other', ('Other Structures', self.unit_cols, self.unit_data, 'Structure - Defense - Factory - Economy'))])
 
         for category, data in self.unit_groups.items():
-            for unit in self.get_units(data[3]):
+            for unit in self.get_units(data[3], True):
                 unit.web_category = category
 
-    def get_units(self, restriction):
+    def get_units(self, restriction, get_all=False):
         """ Get the units that match the specified category restriction """
         R = units.get_restriction(restriction)
         for u in self.sorted_units:
-            if R.satisfies(u):
+            if R.satisfies(u) and (get_all or show_variants() or not u.variant):
                 yield u
 
     def get_icon_path(self, unit_name):

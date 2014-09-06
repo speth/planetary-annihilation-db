@@ -16,6 +16,8 @@
       % include
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="/static/bootstrap.min.js"></script>
+    <script src="/static/utils.js"></script>
   </body>
 </html>
