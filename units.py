@@ -71,6 +71,10 @@ class VersionDb:
         for commander in commanders[1:]:
             commander.variant = True
 
+        # Determine units that can actually be built
+        for commander in commanders:
+            commander.set_accessible()
+
     def load_units(self):
         unitlist = json.load(open(self.root + '/pa/units/unit_list.json'))['units']
         for u in unitlist:
@@ -160,6 +164,7 @@ class Unit(Thing):
     brake = 0
     tier = 0
     variant = False
+    accessible = False
 
     vision_radius = 0
     underwater_vision_radius = 0
@@ -293,6 +298,12 @@ class Unit(Thing):
     @property
     def affects_economy(self):
         return bool(self.metal_rate or self.energy_rate or self.build_rate)
+
+    def set_accessible(self):
+        self.accessible = True
+        for u in self.builds:
+            if not u.accessible:
+                u.set_accessible()
 
     def __repr__(self):
         return '<Unit: {!r}>'.format(self.role)
