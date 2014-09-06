@@ -55,6 +55,22 @@ class VersionDb:
                     unit.builds.add(other)
                     other.built_by.add(unit)
 
+        # find a reference commander
+        commanders = []
+        for unit in self.units.values():
+            base = unit.base
+            while base:
+                if base.safename == 'base_commander':
+                    commanders.append(unit)
+                    break
+                else:
+                    base = base.base
+        commanders.sort(key=lambda x: x.name)
+
+        # Mark all the other commanders as 'variants'
+        for commander in commanders[1:]:
+            commander.variant = True
+
     def load_units(self):
         unitlist = json.load(open(self.root + '/pa/units/unit_list.json'))['units']
         for u in unitlist:
@@ -263,19 +279,6 @@ class Unit(Thing):
                     self.radar_radius = item['radius']
                 elif item['layer'] == 'underwater':
                     self.sonar_radius = item['radius']
-
-        # identify variant commanders; "Alpha Commander" is assumed to be canonical
-        if self.safename == 'imperial_alpha':
-            self.variant = False
-        else:
-            base = self.base
-            while base is not None:
-                if base.safename == 'base_commander':
-                    self.variant = True
-                    break
-                else:
-                    base = base.base
-
 
     @property
     def metal_rate(self):
