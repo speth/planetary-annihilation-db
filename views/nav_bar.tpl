@@ -42,11 +42,18 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="javascript:toggle_commander_variants()">
+          <li><a href="javascript:toggle_bool('show_commander_variants')">
             % if webunits.show_variants():
               Hide Commander Variants
             % else:
               Show Commander Variants
+            % end
+            </a></li>
+          <li><a href="javascript:toggle_bool('show_inaccessible_units')">
+            % if webunits.show_inaccessible():
+              Hide Inaccessible Units
+            % else:
+              Show Inaccessible Units
             % end
             </a></li>
         </ul>

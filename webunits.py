@@ -25,6 +25,9 @@ import collections
 def show_variants():
     return bool(int(request.get_cookie("show_commander_variants", '0')))
 
+def show_inaccessible():
+    return bool(int(request.get_cookie("show_inaccessible_units", '0')))
+
 
 class WebUnits:
     def __init__(self, db):
@@ -54,7 +57,11 @@ class WebUnits:
         """ Get the units that match the specified category restriction """
         R = units.get_restriction(restriction)
         for u in self.sorted_units:
-            if R.satisfies(u) and (get_all or show_variants() or not u.variant):
+            if R.satisfies(u):
+                if not get_all and (u.variant and not show_variants()):
+                    continue
+                if not get_all and not (u.accessible or show_inaccessible()):
+                    continue
                 yield u
 
     def get_icon_path(self, unit_name):

@@ -6,6 +6,8 @@
     % for other in u.builds:
     %   if other.variant and not webunits.show_variants():
     %     continue
+    %   elif not other.accessible and not webunits.show_inaccessible():
+    %     continue
     %   end
       <li>
         % include unit_link unit=other, version=version
