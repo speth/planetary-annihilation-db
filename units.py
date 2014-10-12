@@ -176,8 +176,10 @@ class Unit(Thing):
 
     vision_radius = 0
     underwater_vision_radius = 0
+    orbital_vision_radius = 0
     radar_radius = 0
     sonar_radius = 0
+    orbital_radar_radius = 0
 
     def __init__(self, db, resource_name):
         super().__init__(db, resource_name)
@@ -287,11 +289,24 @@ class Unit(Thing):
                     self.vision_radius = item['radius']
                 elif item['layer'] == 'underwater':
                     self.underwater_vision_radius = item['radius']
+                elif item['layer'] == 'orbital':
+                    self.orbital_vision_radius = item['radius']
+                elif item['layer'] == 'celestial':
+                    pass # not sure what this is...
+                else:
+                    print('unparsed recon item:', item)
             elif item['channel'] == 'radar':
                 if item['layer'] == 'surface_and_air':
                     self.radar_radius = item['radius']
                 elif item['layer'] == 'underwater':
                     self.sonar_radius = item['radius']
+                elif item['layer'] == 'orbital':
+                    self.orbital_radar_radius = item['radius']
+                else:
+                    print('unparsed recon item:', item)
+            else:
+                print('unparsed recon item:', item)
+
 
     @property
     def metal_rate(self):
