@@ -348,6 +348,8 @@ class Weapon(Thing):
     energy_per_shot = 0
     ammo_demand = 0
 
+    target_layers = ()
+
     def __init__(self, db, resource_name):
         super().__init__(db, resource_name)
 
@@ -382,6 +384,9 @@ class Weapon(Thing):
             else:
                 self.metal_rate = - rate
                 self.metal_per_shot = ammo_per_shot
+
+        self.target_layers = [layer[3:] # strip 'WL_' prefix
+                              for layer in self.raw.pop('target_layers', ())]
 
     def __repr__(self):
         return '<Weapon: {!r}>'.format(self.name)

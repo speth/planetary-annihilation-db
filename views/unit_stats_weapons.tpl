@@ -24,5 +24,8 @@
       <li>Metal cost: {{w.ammo.metal_cost}} per shot</li>
       <li>Build time: {{webunits.timestr(w.ammo.metal_cost / u.build_rate)}}</li>
     % end
+    % if w.target_layers:
+      <li>Targets: {{', '.join(w.target_layers)}}</li>
+    % end
   </ul>
 % end
