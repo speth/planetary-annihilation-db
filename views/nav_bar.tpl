@@ -36,6 +36,7 @@
       %   q['v2'] = version
       % end
       <li><a href="/compare?{{urllib.parse.urlencode(q)}}">Compare</a></li>
+      <li><a href="/about">About</a></li>
 
     </ul>
     <ul class="nav navbar-nav navbar-right">

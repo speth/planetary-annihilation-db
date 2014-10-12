@@ -189,6 +189,12 @@ def callback():
                     have_icon1=have_icon1, have_icon2=have_icon2)
 
 
+@route('/about')
+def callback():
+    version = request.query.version or 'current'
+    return template('about', version=version)
+
+
 @route('/build_icons/<name>')
 def callback(name):
     version = request.query.version or 'current'
