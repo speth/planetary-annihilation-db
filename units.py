@@ -2,6 +2,7 @@ import json
 import pprint
 import collections
 import os
+import re
 
 try:
     CONFIG = json.load(open('padb.json'))
@@ -20,6 +21,13 @@ with the path to the Planetary Annihilation 'media' directory:
 ****************************************************************
 """)
     raise
+
+def delocalize(text):
+    if text.startswith('!LOC'):
+        return re.sub(r'!LOC\(.*?\):(.*)', r'\1', text)
+    else:
+        return text
+
 
 class VersionDb:
     def __init__(self, version='current'):
@@ -175,9 +183,9 @@ class Unit(Thing):
         super().__init__(db, resource_name)
         db._units[resource_name] = self
 
-        self.name = self.raw.pop('display_name', self.safename)
-        self.role = self.raw.pop('unit_name', self.name)
-        self.description = self.raw.pop('description', '')
+        self.name = delocalize(self.raw.pop('display_name', self.safename))
+        self.role = delocalize(self.raw.pop('unit_name', self.name))
+        self.description = delocalize(self.raw.pop('description', ''))
 
         if 'unit_types' in self.raw:
             self.unit_types = set()
