@@ -199,7 +199,11 @@ def callback():
 def callback(name):
     version = request.query.version or 'current'
     db = dbs[version]
-    return static_file(db.get_icon_path(name), root=db.db.root)
+    icon = db.get_icon_path(name)
+    if icon:
+        return static_file(icon, root=db.db.root)
+    else:
+        return static_file('blank.png', root='./static/')
 
 
 @route('/static/<filename>')

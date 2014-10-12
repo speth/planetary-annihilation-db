@@ -62,3 +62,11 @@ span.tier {
     font-size: 75%;
     vertical-align: middle;
 }
+
+.table.vert-center tbody>tr>td{
+    vertical-align: middle;
+}
+
+img.unit-icon {
+    margin: -8px -4px -8px -8px;
+}
