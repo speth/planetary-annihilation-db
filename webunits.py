@@ -172,7 +172,8 @@ def callback(resource):
     text = pprint.pformat(db.json[resource])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.json:
-            text = text.replace(item, "<a href='/json/{}'>{}</a>".format(key, item))
+            ver = '?version={}'.format(version) if version != 'current' else ''
+            text = text.replace(item, "<a href='/json/{}{}'>{}</a>".format(key, ver, item))
 
     return template('json', db=db, resource=resource, text=text, version=version)
 
