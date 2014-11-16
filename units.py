@@ -346,7 +346,7 @@ class Unit(Thing):
                 u.set_accessible()
 
     def __repr__(self):
-        return '<Unit: {!r}>'.format(self.role)
+        return '<Unit: {} {!r}>'.format(self.safename, self.role)
 
 
 class Tool(Thing):
@@ -416,7 +416,7 @@ class Weapon(Tool):
                               for layer in self.raw.pop('target_layers', ())]
 
     def __repr__(self):
-        return '<Weapon: {!r}>'.format(self.name)
+        return '<Weapon: {} {!r}>'.format(self.safename, self.name)
 
 
 class Ammo(Thing):
@@ -448,7 +448,7 @@ class Ammo(Thing):
             self.metal_cost = self.raw.pop('build_metal_cost')
 
     def __repr__(self):
-        return '<Ammo: {!r}>'.format(self.name)
+        return '<Ammo: {} {!r}>'.format(self.safename, self.name)
 
 
 class BuildArm(Tool):
@@ -466,7 +466,7 @@ class BuildArm(Tool):
             self.energy_consumption = demand.get('energy')
 
     def __repr__(self):
-        return '<Build Arm: {!r}>'.format(self.name)
+        return '<Build Arm: {} {!r}>'.format(self.safename, self.name)
 
 
 ###### Buildable Categories ######
