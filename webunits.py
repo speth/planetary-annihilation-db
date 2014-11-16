@@ -49,11 +49,16 @@ class WebUnits:
             ('orbital', ('Orbital', self.unit_cols, self.unit_data, 'Orbital - Construction')),
             ('defense', ('Defensive Structures', self.unit_cols, self.unit_data, 'Structure & Defense')),
             ('economy', ('Economy', self.econ_cols, self.econ_data, 'Economy - Commander')),
-            ('other', ('Other Structures', self.unit_cols, self.unit_data, '(Structure - Defense - Factory - Economy) | PlanetEngine'))])
+            ('other', ('Other', self.unit_cols, self.unit_data, 'Ungrouped'))])
+
+        for u in self.sorted_units:
+            u.unit_types.add('Ungrouped')
 
         for category, data in self.unit_groups.items():
             for unit in self.get_units(data[3], True):
                 unit.web_category = category
+                if category != 'other':
+                    unit.unit_types.discard('Ungrouped')
 
     def get_units(self, restriction, get_all=False):
         """ Get the units that match the specified category restriction """

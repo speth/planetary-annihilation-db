@@ -14,7 +14,7 @@
   <div>
     % include units_list heading='Defensive Structures', units=defense, link='defense', version=version
     % include units_list heading='Orbital', units=orbital, link='orbital', version=version
-    % include units_list heading='Other Structures', units=other, link='other', version=version
+    % include units_list heading='Other', units=other, link='other', version=version
   </div>
 </div>
 <div class="clear"></div>
