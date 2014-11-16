@@ -27,5 +27,6 @@
     % if w.target_layers:
       <li>Targets: {{', '.join(w.target_layers)}}</li>
     % end
+    <li><a href="/json/{{w.safename}}">Blueprint</a></li>
   </ul>
 % end

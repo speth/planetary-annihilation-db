@@ -3,6 +3,7 @@ import pprint
 import collections
 import os
 import re
+import copy
 
 try:
     CONFIG = json.load(open('padb.json'))
@@ -45,6 +46,9 @@ class VersionDb:
         # for inspection, using a friendly name
         self.units = collections.OrderedDict()
         self.weapons = {}
+
+        # Parsed JSON objects. Keys are the json file, minus the extension
+        self.json = {}
 
     def build_build_tree(self):
         for unit in sorted(self._units.values(), key=lambda u: (u.build_cost, u.name)):
@@ -120,8 +124,11 @@ class Thing:
     def __init__(self, db, resource_name):
         self.db = db
 
-        with open(db.root + resource_name) as datafile:
-            raw = json.load(datafile)
+        short_name = resource_name.rsplit('/', 1)[1].split('.')[0]
+        if short_name not in self.db.json:
+            with open(db.root + resource_name) as datafile:
+                self.db.json[short_name] = json.load(datafile)
+        raw = copy.deepcopy(self.db.json[short_name])
 
         if 'base_spec' in raw:
             base = self.__class__(self.db, raw['base_spec'])
@@ -136,6 +143,10 @@ class Thing:
     def safename(self):
         """ A (hopefully) unique name that can be used in URLs """
         return self.resource_name.rsplit('/', 1)[1].split('.')[0]
+
+    @property
+    def json(self):
+        return self.db.json[self.resource_name]
 
     def report(self, show_all=False):
         out = []

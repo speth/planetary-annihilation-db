@@ -1,3 +1,4 @@
+<li><a href='/json/{{u.safename}}'>Blueprint</a></li>
 <li>HP: {{u.health}}</li>
 <li>Build cost: {{u.build_cost}} metal</li>
 % if len(u.weapons) > 1:

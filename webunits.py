@@ -18,6 +18,8 @@ except ImportError:
 from bottle import route, run, template, static_file, request
 
 import os
+import pprint
+import re
 import units
 import itertools
 import collections
@@ -161,6 +163,18 @@ def callback(name):
     db = dbs[version]
     have_icon = bool(db.get_icon_path(name))
     return template('unit', u=db.units[name], have_icon=have_icon, version=db.version)
+
+
+@route('/json/<resource>')
+def callback(resource):
+    version = request.query.version or 'current'
+    db = dbs[version].db
+    text = pprint.pformat(db.json[resource])
+    for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
+        if key in db.json:
+            text = text.replace(item, "<a href='/json/{}'>{}</a>".format(key, item))
+
+    return template('json', db=db, resource=resource, text=text, version=version)
 
 
 @route('/compare')

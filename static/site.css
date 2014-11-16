@@ -70,3 +70,14 @@ span.tier {
 img.unit-icon {
     margin: -8px -4px -8px -8px;
 }
+
+pre {
+    color: #000000;
+    background-color: inherit;
+    border: none;
+}
+
+pre > a {
+    font-weight: bold;
+    text-decoration: underline;
+}
