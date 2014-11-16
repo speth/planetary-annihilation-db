@@ -224,9 +224,15 @@ class Unit(Thing):
                     elif 'build_arm' in tool_name:
                         self.build_arms.append(BuildArm(self.db, resource))
                     else:
-                        self.misc_tools.append(Thing(self.db, resource))
+                        test = Tool(self.db, resource)
+                        if test.tool_type == 'TOOL_Weapon':
+                            self.weapons.append(Weapon(self.db, resource))
+                        else:
+                            print('unclassified tool for {}: {}'.format(
+                                  self.name, tool))
+                            self.misc_tools.append(test)
                 except IOError:
-                        pass
+                    pass
 
         self.dps = sum(w.dps for w in self.weapons)
         self.salvo_damage = sum(w.damage for w in self.weapons)
@@ -332,7 +338,17 @@ class Unit(Thing):
         return '<Unit: {!r}>'.format(self.role)
 
 
-class Weapon(Thing):
+class Tool(Thing):
+    tool_type = None
+
+    def __init__(self, db, resource_name):
+        super().__init__(db, resource_name)
+
+        if 'tool_type' in self.raw:
+            self.tool_type = self.raw.pop('tool_type')
+
+
+class Weapon(Tool):
     rof = 0.0
     ammo = None
     dps = 0.0
@@ -424,7 +440,7 @@ class Ammo(Thing):
         return '<Ammo: {!r}>'.format(self.name)
 
 
-class BuildArm(Thing):
+class BuildArm(Tool):
     metal_consumption = 0
     energy_consumption = 0
 
