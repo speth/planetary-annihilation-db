@@ -3,7 +3,7 @@
   <div>
     % include units_list heading='Factories', units=factories, link='factories', version=version
     % include units_list heading='Construction Units', units=builders, link='builders', version=version
-    % include units_list heading='Economic Structures', units=economy, link='economy', version=version
+    % include units_list heading='Economy', units=economy, link='economy', version=version
   </div>
   <div>
     % include units_list heading='Vehicles', units=vehicles, link='vehicles', version=version
