@@ -40,7 +40,7 @@ class WebUnits:
         self.sorted_units = sorted(self.units.values(), key=lambda u: u.build_cost)
 
         self.unit_groups = collections.OrderedDict([
-            ('factories', ('Factories', self.builder_cols, self.builder_data, 'Factory')),
+            ('factories', ('Factories', self.builder_cols, self.builder_data, 'Factory - PlanetEngine')),
             ('builders', ('Construction Units', self.builder_cols, self.builder_data,'Mobile & Construction')),
             ('vehicles', ('Vehicles', self.mobile_cols, self.mobile_data, 'Mobile & Tank - Construction')),
             ('bots', ('Bots', self.mobile_cols, self.mobile_data, 'Mobile & Bot - Construction')),
@@ -49,7 +49,7 @@ class WebUnits:
             ('orbital', ('Orbital', self.unit_cols, self.unit_data, 'Orbital - Construction')),
             ('defense', ('Defensive Structures', self.unit_cols, self.unit_data, 'Structure & Defense')),
             ('economy', ('Economy', self.econ_cols, self.econ_data, 'Economy - Commander')),
-            ('other', ('Other Structures', self.unit_cols, self.unit_data, 'Structure - Defense - Factory - Economy'))])
+            ('other', ('Other Structures', self.unit_cols, self.unit_data, '(Structure - Defense - Factory - Economy) | PlanetEngine'))])
 
         for category, data in self.unit_groups.items():
             for unit in self.get_units(data[3], True):
