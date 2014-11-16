@@ -13,6 +13,7 @@
   </div>
   <div>
     % include units_list heading='Defensive Structures', units=defense, link='defense', version=version
+    % include units_list heading='Reconnaissance', units=recon, link='recon', version=version
     % include units_list heading='Orbital', units=orbital, link='orbital', version=version
     % include units_list heading='Other', units=other, link='other', version=version
   </div>

@@ -46,9 +46,10 @@ class WebUnits:
             ('bots', ('Bots', self.mobile_cols, self.mobile_data, 'Mobile & Bot - Construction')),
             ('air', ('Aircraft', self.mobile_cols, self.mobile_data, 'Mobile & Air - Construction')),
             ('naval', ('Naval', self.mobile_cols, self.mobile_data, 'Mobile & Naval - Construction')),
-            ('orbital', ('Orbital', self.unit_cols, self.unit_data, 'Orbital - Construction')),
+            ('orbital', ('Orbital', self.unit_cols, self.unit_data, 'Orbital - Construction - Recon')),
             ('defense', ('Defensive Structures', self.unit_cols, self.unit_data, 'Structure & Defense')),
             ('economy', ('Economy', self.econ_cols, self.econ_data, 'Economy - Commander')),
+            ('recon', ('Reconnaissance', self.recon_cols, self.recon_data, 'Recon')),
             ('other', ('Other', self.unit_cols, self.unit_data, 'Ungrouped'))])
 
         for u in self.sorted_units:
@@ -98,6 +99,14 @@ class WebUnits:
     def econ_data(self, restriction):
         return [(u, u.build_cost, u.health, u.metal_rate, u.energy_rate,
                  u.storage.metal, u.storage.energy)
+                for u in self.get_units(restriction)]
+
+    recon_cols = ['Name', 'Cost', 'HP', 'E Rate',
+                  'Vision', 'Radar', 'Orbital Vision', 'Orbital Radar', 'Sonar']
+    def recon_data(self, restriction):
+        return [(u, u.build_cost, u.health, -u.energy_rate,
+                 u.vision_radius, u.radar_radius, u.orbital_vision_radius,
+                 u.orbital_radar_radius, u.sonar_radius)
                 for u in self.get_units(restriction)]
 
 
