@@ -4,6 +4,7 @@ import collections
 import os
 import re
 import copy
+import collections
 
 try:
     CONFIG = json.load(open('padb.json'))
@@ -226,27 +227,33 @@ class Unit(Thing):
             self.weapons = []
             self.build_arms = []
             self.misc_tools = []
-            for tool in self.raw.pop('tools', ()):
-                resource = tool['spec_id']
+
+            tools = collections.Counter(tool['spec_id']
+                                        for tool in self.raw.pop('tools', ()))
+            for resource,count in tools.items():
                 tool_name = resource.rsplit('/')[-1].split('.')[0]
                 try:
                     if 'weapon' in tool_name:
                         self.weapons.append(Weapon(self.db, resource))
+                        self.weapons[-1].count = count
                     elif 'build_arm' in tool_name:
                         self.build_arms.append(BuildArm(self.db, resource))
+                        self.build_arms[-1].count = count
                     else:
                         test = Tool(self.db, resource)
                         if test.tool_type == 'TOOL_Weapon':
                             self.weapons.append(Weapon(self.db, resource))
+                            self.weapons[-1].count = count
                         else:
                             print('unclassified tool for {}: {}'.format(
-                                  self.name, tool))
+                                  self.name, resource))
                             self.misc_tools.append(test)
+                            self.misc_tools[-1].count = count
                 except IOError:
                     pass
 
-        self.dps = sum(w.dps for w in self.weapons)
-        self.salvo_damage = sum(w.damage for w in self.weapons)
+        self.dps = sum(w.dps*w.count for w in self.weapons)
+        self.salvo_damage = sum(w.damage*w.count for w in self.weapons)
 
         # Economy
         for field in ('consumption', 'production', 'storage'):
@@ -280,8 +287,8 @@ class Unit(Thing):
 
         self.weapon_consumption = Resources()
         for weapon in self.weapons:
-            self.weapon_consumption.metal -= weapon.metal_rate
-            self.weapon_consumption.energy -= weapon.energy_rate
+            self.weapon_consumption.metal -= weapon.metal_rate * weapon.count
+            self.weapon_consumption.energy -= weapon.energy_rate * weapon.count
 
         self.base_template = self.safename.startswith('base_')
 
@@ -368,6 +375,7 @@ class Weapon(Tool):
     splash_damage = 0.0
     splash_radius = 0
     max_range = 0
+    count = 1
 
     metal_rate = 0
     energy_rate = 0

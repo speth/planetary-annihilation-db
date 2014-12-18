@@ -1,10 +1,8 @@
 % import webunits
 % for i, w in enumerate(u.weapons):
-  % if len(u.weapons) > 1:
-    <li><div class='heading'>Weapon {{i+1}}:</div></li>
-  % else:
-    <li><div class='heading'>Weapon:</div></li>
-  % end
+  % N = " #{}".format(i+1) if len(u.weapons) > 1 else ""
+  % Q = " (x{})".format(w.count) if w.count > 1 else ""
+  <li><div class='heading'>Weapon{{N}}{{Q}}:</div></li>
   <ul>
     <li>Range: {{w.max_range}}</li>
     <li>Damage: {{w.dps}} DPS: {{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{w.rof}} shots per second)</li>
