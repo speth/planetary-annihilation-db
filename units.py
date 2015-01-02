@@ -285,6 +285,9 @@ class Unit(Thing):
             if 'energy' in data:
                 getattr(self, field).energy = data['energy']
 
+        if 'teleporter' in self.raw:
+            self.consumption.energy = self.raw['teleporter']['energy_demand']
+
         self.build_rate = 0
 
         if ('Economy' not in self.unit_types and
