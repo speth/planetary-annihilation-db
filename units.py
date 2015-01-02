@@ -169,6 +169,7 @@ class Thing:
 class Unit(Thing):
     unit_types = ()
     buildable_types = ''
+    spawn_layers = ()
     build_cost = 0
     build_inefficiency = 0
     health = 0
@@ -206,6 +207,24 @@ class Unit(Thing):
             for unit_type in self.raw.pop('unit_types'):
                 assert unit_type.startswith('UNITTYPE_')
                 self.unit_types.add(unit_type[9:])
+
+        if 'spawn_layers' in self.raw:
+            layers = self.raw.pop('spawn_layers')
+            if layers == 'WL_LandHorizontal':
+                self.spawn_layers = ('land',)
+            elif layers == 'WL_WaterSurface':
+                self.spawn_layers = ('water surface',)
+            elif layers == 'WL_DeepWater':
+                self.spawn_layers = ('deep water',)
+            elif layers == 'WL_Air':
+                self.spawn_layers = ('air',)
+            elif (layers == 'WL_AnyHorizontalGroundOrWaterSurface' or
+                  layers == 'WL_AnySurface'):
+                self.spawn_layers = ('land', 'water surface')
+            elif layers == 'WL_Orbital':
+                self.spawn_layers = ('orbital',)
+            else:
+                print('Unknown spawn layer:', layers)
 
         if 'Basic' in self.unit_types:
             self.tier = 1

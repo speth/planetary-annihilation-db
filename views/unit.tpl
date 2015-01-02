@@ -6,6 +6,8 @@
   % if 'Mobile' in u.unit_types:
     <br />
     %include unit_stats_physics u=u
+  % else:
+    %include unit_stats_building u=u
   % end
   <br />
   % include unit_stats_recon u=u
