@@ -170,6 +170,7 @@ class Unit(Thing):
     unit_types = ()
     buildable_types = ''
     spawn_layers = ()
+    amphibious = False
     build_cost = 0
     build_inefficiency = 0
     health = 0
@@ -320,6 +321,9 @@ class Unit(Thing):
             self.acceleration = nav.pop('acceleration')
         if 'brake' in nav:
             self.brake = nav.pop('brake')
+        nav_type = nav.pop('type', '')
+        if nav_type == 'amphibious':
+            self.amphibious = True
 
         try:
             recon = self.raw['recon']['observer'].pop('items')
