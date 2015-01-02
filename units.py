@@ -32,14 +32,22 @@ def delocalize(text):
 
 
 class VersionDb:
-    def __init__(self, version='current'):
+    def __init__(self, version='current', active_mods=()):
         self.version = version
+        self.active_mods = active_mods
 
         # Directory containing the 'pa' and 'ui' subdirectories
         if version == 'current':
             self.root = CONFIG['pa_root']
         else:
             self.root = os.path.join(CONFIG['archive_root'], CONFIG['versions'][version])
+
+        # data_dirs includes directories containing files overridden by server mods
+        self.mod_dirs = []
+        for mod in active_mods:
+            self.mod_dirs.append(AVAILABLE_MODS[mod]['dir'])
+        self.data_dirs = self.mod_dirs + [self.root]
+
         # internal use, keyed by resource_name
         self._units = {}
         self._things = {}
@@ -50,6 +58,15 @@ class VersionDb:
 
         # Parsed JSON objects. Keys are the json file, minus the extension
         self.json = {}
+
+    def get_json(self, resource_name):
+        for directory in self.data_dirs:
+            path = directory + resource_name
+            if os.path.exists(path):
+                with open(path) as datafile:
+                    return json.load(datafile)
+        print('failed to load {!r} (version {})'.format(resource_name, self.version))
+        return {}
 
     def build_build_tree(self):
         for unit in sorted(self._units.values(), key=lambda u: (u.build_cost, u.name)):
@@ -127,8 +144,7 @@ class Thing:
 
         short_name = resource_name.rsplit('/', 1)[1].split('.')[0]
         if short_name not in self.db.json:
-            with open(db.root + resource_name) as datafile:
-                self.db.json[short_name] = json.load(datafile)
+            self.db.json[short_name] = db.get_json(resource_name)
         raw = copy.deepcopy(self.db.json[short_name])
 
         if 'base_spec' in raw:
@@ -592,6 +608,15 @@ def get_restriction(text):
         else:
             current.append(c)
     return _restriction(current)
+
+AVAILABLE_MODS = {}
+def load_mods():
+    for f in os.listdir(CONFIG['mods_root']):
+        infoname = os.path.join(CONFIG['mods_root'], f, 'modinfo.json')
+        if os.path.exists(infoname):
+            modinfo = json.load(open(infoname))
+            modinfo['dir'] = os.path.join(CONFIG['mods_root'], f)
+            AVAILABLE_MODS[modinfo['identifier']] = modinfo
 
 def load_all():
     dbs = {v: VersionDb(v) for v in CONFIG.get('versions', ())}
