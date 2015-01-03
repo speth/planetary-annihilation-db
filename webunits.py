@@ -239,6 +239,9 @@ def callback(name):
 def callback(filename):
     return static_file(filename, root='./static/')
 
+@route('/fonts/<filename>')
+def callback(filename):
+    return static_file(filename, root='./static/')
 
 if __name__ == '__main__':
     run(host='localhost', port=8080,
