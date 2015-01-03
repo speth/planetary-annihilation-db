@@ -183,9 +183,9 @@ def callback(name):
 def callback(resource):
     version = request.query.version or 'current'
     db = dbs[version].db
-    text = pprint.pformat(db.json[resource])
+    text = pprint.pformat(db.json[db.full_names[resource]])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
-        if key in db.json:
+        if key in db.full_names:
             ver = '?version={}'.format(version) if version != 'current' else ''
             text = text.replace(item, "<a href='/json/{}{}'>{}</a>".format(key, ver, item))
 

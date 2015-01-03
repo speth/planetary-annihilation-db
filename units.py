@@ -56,17 +56,54 @@ class VersionDb:
         self.units = collections.OrderedDict()
         self.weapons = {}
 
+        # unique short names for each resource
+        self.safe_names = {} # full resource path -> safe name
+        self.full_names = {} # safe name -> full resource path
+
         # Parsed JSON objects. Keys are the json file, minus the extension
         self.json = {}
 
+    def get_safe_name(self, resource_name):
+        if resource_name in self.safe_names:
+            return self.safe_names[resource_name]
+
+        # Find a unique short name
+        dirname, filename = resource_name.rsplit('/', 2)[-2:]
+        filename = filename.split('.')[0]
+        if filename not in self.full_names:
+            safe_name = filename
+        elif dirname not in self.full_names:
+            safe_name = dirname
+        else:
+            # Fallback mechanism for units which do not follow Uber's convention
+            # where the unit blueprint has a unique name which matches the
+            # directory name.
+            i = 2
+            while True:
+                safe_name = '{}_{}'.format(dirname, i)
+                if safe_name not in self.full_names:
+                    break
+                i += 1
+
+        self.safe_names[resource_name] = safe_name
+        self.full_names[safe_name] = resource_name
+        return safe_name
+
     def get_json(self, resource_name):
+        if resource_name in self.json:
+            return self.json[resource_name]
+
         for directory in self.data_dirs:
             path = directory + resource_name
             if os.path.exists(path):
                 with open(path) as datafile:
-                    return json.load(datafile)
+                    j = json.load(datafile)
+                    self.json[resource_name] = j
+                    return j
+
         print('failed to load {!r} (version {})'.format(resource_name, self.version))
-        return {}
+        self.json[resource_name] = {}
+        return self.json[resource_name]
 
     def build_build_tree(self):
         for unit in sorted(self._units.values(), key=lambda u: (u.build_cost, u.name)):
@@ -141,11 +178,7 @@ class Thing:
 
     def __init__(self, db, resource_name):
         self.db = db
-
-        short_name = resource_name.rsplit('/', 1)[1].split('.')[0]
-        if short_name not in self.db.json:
-            self.db.json[short_name] = db.get_json(resource_name)
-        raw = copy.deepcopy(self.db.json[short_name])
+        raw = copy.deepcopy(self.db.get_json(resource_name))
 
         if 'base_spec' in raw:
             base = self.__class__(self.db, raw['base_spec'])
@@ -155,15 +188,11 @@ class Thing:
         self.resource_name = resource_name
         self.raw = raw
         self.db._things[self.resource_name] = self
-
-    @property
-    def safename(self):
-        """ A (hopefully) unique name that can be used in URLs """
-        return self.resource_name.rsplit('/', 1)[1].split('.')[0]
+        self.safename = self.db.get_safe_name(self.resource_name)
 
     @property
     def json(self):
-        return self.db.json[self.resource_name]
+        return self.db.get_json(self.resource_name)
 
     def report(self, show_all=False):
         out = []
