@@ -237,6 +237,10 @@ def callback(filename):
 def callback(filename):
     return static_file(filename, root='./static/')
 
+@route('/robots.txt')
+def callback():
+    return static_file('robots.txt', root='./static/')
+
 if __name__ == '__main__':
     run(host='localhost', port=8080,
         reloader=True, # Reload on changes to .py files
