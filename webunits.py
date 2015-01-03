@@ -125,27 +125,24 @@ for version,db in sorted(units.load_all().items()):
 
 @route('/table/<name>')
 def callback(name):
-    version = request.query.version or 'current'
-    db = dbs[version]
-    print(version)
+    db = dbs[request.query.version or 'current']
     caption, columns, data_function, categories = db.unit_groups[name]
     return template('unit_table_single',
                     caption=caption,
                     columns=columns,
                     data=data_function(categories),
-                    version=db.version)
+                    db=db)
 
 @route('/table/all')
 def callback():
-    version = request.query.version or 'current'
-    db = dbs[version]
+    db = dbs[request.query.version or 'current']
     table_data = {}
     tables = []
     for group,(caption, columns, data_function, categories) in db.unit_groups.items():
         table_data[group] = data_function(categories)
         tables.append(template('unit_table', caption=caption,
                                columns=columns, data=table_data[group],
-                               version=db.version))
+                               db=db))
 
     # Check to make sure we didn't forget anything important
     other2 = set(db.units.values())
@@ -155,41 +152,39 @@ def callback():
     if other2:
         leftover_data = [(u, u.build_cost, u.dps, u.health) for u in other2]
         leftover = template('unit_table', caption='Uncategorized Units',
-                            columns=unit_cols, data=leftover_data, version=db.version)
+                            columns=unit_cols, data=leftover_data, db=db)
         tables.append(leftover)
 
-    return template('unitlist', version=db.version, tables=tables)
+    return template('unitlist', db=db, tables=tables)
 
 @route('/')
 def callback():
-    version = request.query.version or 'current'
-    db = dbs[version]
+    db = dbs[request.query.version or 'current']
     tables = {}
     for group,(caption, _, _, categories) in db.unit_groups.items():
         tables[group] = db.get_units(categories)
 
-    return template('all_units_list', version=db.version, **tables)
+    return template('all_units_list', db=db, **tables)
 
 
 @route('/unit/<name>')
 def callback(name):
-    version = request.query.version or 'current'
-    db = dbs[version]
+    db = dbs[request.query.version or 'current']
     have_icon = bool(db.get_icon_path(name))
-    return template('unit', u=db.units[name], have_icon=have_icon, version=db.version)
+    return template('unit', u=db.units[name], have_icon=have_icon, db=db)
 
 
 @route('/json/<resource>')
 def callback(resource):
     version = request.query.version or 'current'
-    db = dbs[version].db
-    text = pprint.pformat(db.json[db.full_names[resource]])
+    db = dbs[version]
+    text = pprint.pformat(db.db.json[db.full_names[resource]])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
-        if key in db.full_names:
+        if key in db.db.full_names:
             ver = '?version={}'.format(version) if version != 'current' else ''
             text = text.replace(item, "<a href='/json/{}{}'>{}</a>".format(key, ver, item))
 
-    return template('json', db=db, resource=resource, text=text, version=version)
+    return template('json', db=db, resource=resource, text=text)
 
 
 @route('/compare')
@@ -210,7 +205,7 @@ def callback():
 
     have_icon1 = bool(dbs[v1].get_icon_path(u1.safename))
     have_icon2 = bool(dbs[v2].get_icon_path(u2.safename))
-    return template('compare', version=v1, request=request,
+    return template('compare', request=request,
                     db1=db1, db2=db2,
                     u1=u1, u2=u2,
                     v1=v1, v2=v2,
@@ -220,14 +215,13 @@ def callback():
 
 @route('/about')
 def callback():
-    version = request.query.version or 'current'
-    return template('about', version=version)
+    db = dbs[request.query.version or 'current']
+    return template('about', db=db)
 
 
 @route('/build_icons/<name>')
 def callback(name):
-    version = request.query.version or 'current'
-    db = dbs[version]
+    db = dbs[request.query.version or 'current']
     icon = db.get_icon_path(name)
     if icon:
         return static_file(icon, root=db.db.root)

@@ -1,4 +1,4 @@
 % for table in tables:
   {{!table}}
 % end
-% rebase page version=version
+% rebase page db=db

@@ -31,4 +31,4 @@ on Github.</p>
 </div>
 </div>
 
-% rebase page version=version
+% rebase page db=db

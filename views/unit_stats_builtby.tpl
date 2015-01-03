@@ -9,7 +9,7 @@
     %     continue
     %   end
     <li>
-      % include unit_link unit=other, version=version
+      % include unit_link unit=other, db=db
       % if other.build_rate:
         ({{webunits.timestr(u.build_cost / other.build_rate)}})
       % end

@@ -21,4 +21,4 @@
 </div>
 </div>
 </div>
-% rebase page version=version
+% rebase page db=db

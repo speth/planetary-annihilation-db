@@ -21,11 +21,11 @@
   % end
   % if u.builds:
     <br />
-    % include unit_stats_builds u=u, version=version
+    % include unit_stats_builds u=u, db=db
   % end
   % if u.built_by:
     <br />
-    % include unit_stats_builtby u=u, version=version
+    % include unit_stats_builtby u=u, db=db
   % end
 </ul>
-% rebase page version=version, unit=u
+% rebase page db=db, unit=u

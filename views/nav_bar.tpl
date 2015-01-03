@@ -1,6 +1,7 @@
 % import webunits
 % import urllib
-% suffix = '?version='+version if version != 'current' else ''
+% import units
+% suffix = '?version='+db.version if db.version != 'current' else ''
 <div class="navbar navbar-default navbar-fixed-top">
   <div class="container-fluid">
   <div class="navbar-collapse collapse navbar-responsive-collapse">
@@ -31,9 +32,9 @@
       %   q['u1'] = unit.safename
       %   q['u2'] = unit.safename
       % end
-      % if version != 'current':
-      %   q['v1'] = version
-      %   q['v2'] = version
+      % if db.version != 'current':
+      %   q['v1'] = db.version
+      %   q['v2'] = db.version
       % end
       <li><a href="/compare?{{urllib.parse.urlencode(q)}}">Compare</a></li>
       <li><a href="/about">About</a></li>
@@ -61,7 +62,7 @@
       </li>
 
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{version}}<b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{db.version}}<b class="caret"></b></a>
         <ul class="dropdown-menu">
           % for v in webunits.dbs:
             % if v == 'current':

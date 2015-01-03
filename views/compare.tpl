@@ -127,12 +127,12 @@
   <div class="row">
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_builds u=u1, version=v1
+        % include unit_stats_builds u=u1, db=db1
       </ul>
     </div>
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_builds u=u2, version=v2
+        % include unit_stats_builds u=u2, db=db2
       </ul>
     </div>
   </div>
@@ -142,12 +142,12 @@
     <div class="row">
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_builtby u=u1, version=v1
+          % include unit_stats_builtby u=u1, db=db1
         </ul>
       </div>
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_builtby u=u2, version=v2
+          % include unit_stats_builtby u=u2, db=db2
         </ul>
       </div>
     </div>
@@ -155,4 +155,4 @@
 
 </div>
 
-% rebase page version=version
+% rebase page db=db1

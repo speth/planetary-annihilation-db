@@ -17,7 +17,7 @@
         <img class="unit-icon" src="/build_icons/{{row[0].safename}}" />
       </td>
       <td>
-        % include unit_link unit=row[0], version=version
+        % include unit_link unit=row[0], db=db
       </td>
 
       % for item in row[1:]:
