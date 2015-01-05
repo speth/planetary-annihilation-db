@@ -31,11 +31,11 @@ def show_inaccessible():
     return bool(int(request.get_cookie("show_inaccessible_units", '0')))
 
 
-class WebUnits:
-    def __init__(self, db):
-        self.db = db
-        self.version = self.db.version
-        self.units = {u.safename:u for u in db.units.values()
+class WebUnits(units.VersionDb):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.load_units()
+        self.units = {u.safename:u for u in self.units.values()
                       if u.health > 0 and u.build_cost > 0}
         self.sorted_units = sorted(self.units.values(), key=lambda u: u.build_cost)
 
@@ -76,7 +76,7 @@ class WebUnits:
         path_tmpl = '/ui/{}/live_game/img/build_bar/units/{}.png'
         for directory in ('main/game', 'alpha'):
             filename = path_tmpl.format(directory, unit_name)
-            if os.path.exists(self.db.root + filename):
+            if os.path.exists(self.root + filename):
                 return filename
 
     unit_cols = ['Name', 'Cost', 'DPS', 'HP']
@@ -127,10 +127,7 @@ if 'pa_root' in units.CONFIG:
 def get_db(version):
     assert version in AVAILABLE_VERSIONS
     if version not in LOADED_DBS:
-        print('loading DB for', version)
-        db = units.VersionDb(version)
-        db.load_units()
-        LOADED_DBS[version] = WebUnits(db)
+        LOADED_DBS[version] = WebUnits(version)
     return LOADED_DBS[version]
 
 
@@ -189,9 +186,9 @@ def callback(name):
 def callback(resource):
     version = request.query.version or 'current'
     db = get_db(version)
-    text = pprint.pformat(db.db.json[db.full_names[resource]])
+    text = pprint.pformat(db.json[db.full_names[resource]])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
-        if key in db.db.full_names:
+        if key in db.full_names:
             ver = '?version={}'.format(version) if version != 'current' else ''
             text = text.replace(item, "<a href='/json/{}{}'>{}</a>".format(key, ver, item))
 
@@ -235,7 +232,7 @@ def callback(name):
     db = get_db(request.query.version or 'current')
     icon = db.get_icon_path(name)
     if icon:
-        return static_file(icon, root=db.db.root)
+        return static_file(icon, root=db.root)
     else:
         return static_file('blank.png', root='./static/')
 
