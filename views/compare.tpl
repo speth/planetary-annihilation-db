@@ -40,11 +40,11 @@
           Build: {{db.version}} <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="info">
-          % for ver in webunits.dbs:
+          % for ver in webunits.AVAILABLE_VERSIONS:
             % q = dict(request.query)
             % q['v{}'.format(i+1)] = ver
             <li><a href="compare?{{urllib.parse.urlencode(q)}}">
-              Build: {{webunits.dbs[ver].version}}
+              Build: {{ver}}
             </a></li>
           % end
         </ul>

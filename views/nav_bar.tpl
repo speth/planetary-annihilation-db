@@ -64,7 +64,7 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{db.version}}<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          % for v in webunits.dbs:
+          % for v in webunits.AVAILABLE_VERSIONS:
             % if v == 'current':
               <li><a href="{{webunits.request.fullpath}}">{{v}}</a></li>
             % else:

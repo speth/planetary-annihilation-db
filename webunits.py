@@ -118,14 +118,25 @@ def timestr(val):
     return '{}:{:02}'.format(minutes, seconds)
 
 
-dbs = collections.OrderedDict()
-for version,db in sorted(units.load_all().items()):
-    dbs[version] = WebUnits(db)
+LOADED_DBS = {}
+AVAILABLE_VERSIONS = sorted(units.CONFIG.get('versions', {}))
+if 'pa_root' in units.CONFIG:
+    AVAILABLE_VERSIONS.append('current')
+
+
+def get_db(version):
+    assert version in AVAILABLE_VERSIONS
+    if version not in LOADED_DBS:
+        print('loading DB for', version)
+        db = units.VersionDb(version)
+        db.load_units()
+        LOADED_DBS[version] = WebUnits(db)
+    return LOADED_DBS[version]
 
 
 @route('/table/<name>')
 def callback(name):
-    db = dbs[request.query.version or 'current']
+    db = get_db(request.query.version or 'current')
     caption, columns, data_function, categories = db.unit_groups[name]
     return template('unit_table_single',
                     caption=caption,
@@ -135,7 +146,7 @@ def callback(name):
 
 @route('/table/all')
 def callback():
-    db = dbs[request.query.version or 'current']
+    db = get_db(request.query.version or 'current')
     table_data = {}
     tables = []
     for group,(caption, columns, data_function, categories) in db.unit_groups.items():
@@ -159,7 +170,7 @@ def callback():
 
 @route('/')
 def callback():
-    db = dbs[request.query.version or 'current']
+    db = get_db(request.query.version or 'current')
     tables = {}
     for group,(caption, _, _, categories) in db.unit_groups.items():
         tables[group] = db.get_units(categories)
@@ -169,7 +180,7 @@ def callback():
 
 @route('/unit/<name>')
 def callback(name):
-    db = dbs[request.query.version or 'current']
+    db = get_db(request.query.version or 'current')
     have_icon = bool(db.get_icon_path(name))
     return template('unit', u=db.units[name], have_icon=have_icon, db=db)
 
@@ -177,7 +188,7 @@ def callback(name):
 @route('/json/<resource>')
 def callback(resource):
     version = request.query.version or 'current'
-    db = dbs[version]
+    db = get_db(version)
     text = pprint.pformat(db.db.json[db.full_names[resource]])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.db.full_names:
@@ -191,8 +202,8 @@ def callback(resource):
 def callback():
     v1 = request.query.v1 or 'current'
     v2 = request.query.v2 or 'current'
-    db1 = dbs[v1]
-    db2 = dbs[v2]
+    db1 = get_db(v1)
+    db2 = get_db(v2)
     u1 = db1.units[request.query.u1 or 'land_scout']
     u2 = db2.units[request.query.u2 or 'land_scout']
     cat1 = request.query.cat1 or u1.web_category
@@ -203,8 +214,8 @@ def callback():
     if cat2 != u2.web_category:
         u2 = next(db2.get_units(db2.unit_groups[cat2][3]))
 
-    have_icon1 = bool(dbs[v1].get_icon_path(u1.safename))
-    have_icon2 = bool(dbs[v2].get_icon_path(u2.safename))
+    have_icon1 = bool(get_db(v1).get_icon_path(u1.safename))
+    have_icon2 = bool(get_db(v2).get_icon_path(u2.safename))
     return template('compare', request=request,
                     db1=db1, db2=db2,
                     u1=u1, u2=u2,
@@ -215,13 +226,13 @@ def callback():
 
 @route('/about')
 def callback():
-    db = dbs[request.query.version or 'current']
+    db = get_db(request.query.version or 'current')
     return template('about', db=db)
 
 
 @route('/build_icons/<name>')
 def callback(name):
-    db = dbs[request.query.version or 'current']
+    db = get_db(request.query.version or 'current')
     icon = db.get_icon_path(name)
     if icon:
         return static_file(icon, root=db.db.root)
