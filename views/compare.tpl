@@ -1,5 +1,5 @@
 % import webunits
-% import urllib
+% import units
 <br/>
 <div class="container">
   <div class="row">
@@ -11,9 +11,7 @@
         </button>
         <ul class="dropdown-menu" role="info">
           % for group in db.unit_groups:
-            % q = dict(request.query)
-            % q['cat{}'.format(i+1)] = group
-            <li><a href="compare?{{urllib.parse.urlencode(q)}}">
+            <li><a href="{{webunits.update_query('cat{}'.format(i+1), group)}}">
               {{db.unit_groups[group][0]}}
             </a></li>
           % end
@@ -26,9 +24,7 @@
         </button>
         <ul class="dropdown-menu" role="info">
           % for ux in db.get_units(db.unit_groups[cat][3]):
-            % q = dict(request.query)
-            % q['u{}'.format(i+1)] = ux.safename
-            <li><a href="compare?{{urllib.parse.urlencode(q)}}">
+            <li><a href="{{webunits.update_query('u{}'.format(i+1), ux.safename)}}">
               {{ux.name}}
             </a></li>
           % end
@@ -41,14 +37,37 @@
         </button>
         <ul class="dropdown-menu" role="info">
           % for ver in webunits.AVAILABLE_VERSIONS:
-            % q = dict(request.query)
-            % q['v{}'.format(i+1)] = ver
-            <li><a href="compare?{{urllib.parse.urlencode(q)}}">
-              Build: {{ver}}
+            <li><a href="{{webunits.update_version(field='v{}'.format(i+1), version=ver)}}">
+              {{ver}}
             </a></li>
           % end
         </ul>
       </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
+          Mods ({{len(db.active_mods)}} active)
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="info">
+          % for mod in units.AVAILABLE_MODS.values():
+            <li>
+              % if mod['identifier'] in db.active_mods:
+                <a href="{{webunits.update_version(remove_mod=mod['identifier'], field='v{}'.format(i+1))}}">
+                <b class="glyphicon glyphicon-check"></b>&nbsp;
+                {{mod['display_name']}} {{mod['version']}}
+                </a>
+              % else:
+                <a href="{{webunits.update_version(add_mod=mod['identifier'], field='v{}'.format(i+1))}}">
+                <b class="glyphicon glyphicon-unchecked"></b>&nbsp;
+                {{mod['display_name']}} {{mod['version']}}
+                </a>
+              % end
+            </li>
+          % end
+        </ul>
+      </div>
+
     </div>
   % end
   </div>
@@ -155,4 +174,4 @@
 
 </div>
 
-% rebase page db=db1
+% rebase page db=db1, hide_nav_version=True

@@ -30,6 +30,36 @@ def show_variants():
 def show_inaccessible():
     return bool(int(request.get_cookie("show_inaccessible_units", '0')))
 
+def update_query(field, value):
+    # Get a modified request string with the *field* set to *value*
+    new_query = [k+'='+v for k,v in request.query.items() if k != field]
+    if value:
+        new_query.append(field + '=' + value)
+
+    if new_query:
+        return request.fullpath + '?' + '&'.join(new_query)
+    else:
+        return request.fullpath
+
+
+def update_version(version=None, add_mod=None, remove_mod=None, field='version'):
+    # Get a modified request string with changes to the version, mods, or other
+    # fields specified in the query string
+    q = getattr(request.query, field)
+    items = q.split(':') if q else []
+    if not items:
+        items.append('current')
+    if add_mod:
+        items.append(add_mod)
+    if remove_mod:
+        items.remove(remove_mod)
+    if version:
+        items[0] = version
+    if len(items) == 1 and items[0] == 'current':
+        items = []
+
+    return update_query(field, ':'.join(items))
+
 
 class WebUnits(units.VersionDb):
     def __init__(self, *args, **kwargs):
@@ -38,6 +68,11 @@ class WebUnits(units.VersionDb):
         self.units = {u.safename:u for u in self.units.values()
                       if u.health > 0 and u.build_cost > 0}
         self.sorted_units = sorted(self.units.values(), key=lambda u: u.build_cost)
+
+        if self.version != 'current' or self.active_mods:
+            self.queryversion = ':'.join([self.version] + self.active_mods)
+        else:
+            self.queryversion = None
 
         self.unit_groups = collections.OrderedDict([
             ('factories', ('Factories', self.builder_cols, self.builder_data, 'Factory - PlanetEngine')),
@@ -122,18 +157,29 @@ LOADED_DBS = {}
 AVAILABLE_VERSIONS = sorted(units.CONFIG.get('versions', {}))
 if 'pa_root' in units.CONFIG:
     AVAILABLE_VERSIONS.append('current')
+units.load_mods()
 
 
-def get_db(version):
-    assert version in AVAILABLE_VERSIONS
-    if version not in LOADED_DBS:
-        LOADED_DBS[version] = WebUnits(version)
-    return LOADED_DBS[version]
+def get_db(key=None):
+    # default version and mods are from the query string
+    if key is None:
+        key = request.query.version or 'current'
+
+    version, *mods = key.split(':')
+
+    assert version in AVAILABLE_VERSIONS, version
+    for mod in mods:
+        assert mod in units.AVAILABLE_MODS, (mod, units.AVAILABLE_MODS)
+
+    if key not in LOADED_DBS:
+        print('loading DB for', key)
+        LOADED_DBS[key] = WebUnits(version, mods)
+    return LOADED_DBS[key]
 
 
 @route('/table/<name>')
 def callback(name):
-    db = get_db(request.query.version or 'current')
+    db = get_db()
     caption, columns, data_function, categories = db.unit_groups[name]
     return template('unit_table_single',
                     caption=caption,
@@ -143,7 +189,7 @@ def callback(name):
 
 @route('/table/all')
 def callback():
-    db = get_db(request.query.version or 'current')
+    db = get_db()
     table_data = {}
     tables = []
     for group,(caption, columns, data_function, categories) in db.unit_groups.items():
@@ -167,7 +213,7 @@ def callback():
 
 @route('/')
 def callback():
-    db = get_db(request.query.version or 'current')
+    db = get_db()
     tables = {}
     for group,(caption, _, _, categories) in db.unit_groups.items():
         tables[group] = db.get_units(categories)
@@ -177,7 +223,7 @@ def callback():
 
 @route('/unit/<name>')
 def callback(name):
-    db = get_db(request.query.version or 'current')
+    db = get_db()
     have_icon = bool(db.get_icon_path(name))
     return template('unit', u=db.units[name], have_icon=have_icon, db=db)
 
@@ -185,7 +231,7 @@ def callback(name):
 @route('/json/<resource>')
 def callback(resource):
     version = request.query.version or 'current'
-    db = get_db(version)
+    db = get_db()
     text = pprint.pformat(db.json[db.full_names[resource]])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.full_names:
@@ -211,8 +257,8 @@ def callback():
     if cat2 != u2.web_category:
         u2 = next(db2.get_units(db2.unit_groups[cat2][3]))
 
-    have_icon1 = bool(get_db(v1).get_icon_path(u1.safename))
-    have_icon2 = bool(get_db(v2).get_icon_path(u2.safename))
+    have_icon1 = bool(db1.get_icon_path(u1.safename))
+    have_icon2 = bool(db2.get_icon_path(u2.safename))
     return template('compare', request=request,
                     db1=db1, db2=db2,
                     u1=u1, u2=u2,
@@ -223,13 +269,13 @@ def callback():
 
 @route('/about')
 def callback():
-    db = get_db(request.query.version or 'current')
+    db = get_db()
     return template('about', db=db)
 
 
 @route('/build_icons/<name>')
 def callback(name):
-    db = get_db(request.query.version or 'current')
+    db = get_db()
     icon = db.get_icon_path(name)
     if icon:
         return static_file(icon, root=db.root)

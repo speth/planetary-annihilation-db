@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/static/site.css">
   </head>
   <body>
-    % include nav_bar db=db, unit=get('unit')
+    % include nav_bar db=db, unit=get('unit'), hide_version=get('hide_nav_version')
     <div class="content">
       % include
     </div>

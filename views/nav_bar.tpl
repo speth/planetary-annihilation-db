@@ -1,7 +1,7 @@
 % import webunits
 % import urllib
 % import units
-% suffix = '?version='+db.version if db.version != 'current' else ''
+% suffix = '?version='+db.queryversion if db.queryversion else ''
 <div class="navbar navbar-default navbar-fixed-top">
   <div class="container-fluid">
   <div class="navbar-collapse collapse navbar-responsive-collapse">
@@ -60,19 +60,44 @@
             </a></li>
         </ul>
       </li>
+      % if units.AVAILABLE_MODS and not hide_version:
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Mods
+          % if db.active_mods:
+          ({{len(db.active_mods)}} active)
+          % end
+        <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          % for mod in units.AVAILABLE_MODS.values():
+            <li>
+              % if mod['identifier'] in db.active_mods:
+                <a href="{{webunits.update_version(remove_mod=mod['identifier'])}}">
+                <b class="glyphicon glyphicon-check"></b>&nbsp;
+                {{mod['display_name']}} {{mod['version']}}
+                </a>
+              % else:
+                <a href="{{webunits.update_version(add_mod=mod['identifier'])}}">
+                <b class="glyphicon glyphicon-unchecked"></b>&nbsp;
+                {{mod['display_name']}} {{mod['version']}}
+                </a>
+              % end
+            </li>
+          % end
+        </ul>
+      </li>
+      % end
 
+      % if not hide_version:
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{db.version}}<b class="caret"></b></a>
         <ul class="dropdown-menu">
           % for v in webunits.AVAILABLE_VERSIONS:
-            % if v == 'current':
-              <li><a href="{{webunits.request.fullpath}}">{{v}}</a></li>
-            % else:
-              <li><a href="{{webunits.request.fullpath}}?version={{v}}">{{v}}</a></li>
-            % end
+            <li><a href="{{webunits.update_version(version=v)}}">{{v}}</a></li>
           % end
         </ul>
       </li>
+      % end
     </ul>
   </div>
   </div>

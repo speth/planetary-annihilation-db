@@ -1,4 +1,4 @@
-% suffix = '?version='+db.version if db.version != 'current' else ''
+% suffix = '?version='+db.queryversion if db.queryversion else ''
 <h2><a class="hlink" href="/table/{{link}}{{suffix}}">{{heading}}</a></h2>
 <ul>
 % for u in units:
