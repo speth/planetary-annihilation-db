@@ -2,7 +2,7 @@
 
 % include unit_header u=u, have_icon=have_icon
 <ul>
-  % include unit_stats_basic u=u
+  % include unit_stats_basic u=u, db=db
   % if 'Mobile' in u.unit_types:
     <br />
     %include unit_stats_physics u=u
@@ -17,7 +17,7 @@
   % end
   % if u.weapons:
     <br />
-    % include unit_stats_weapons u=u
+    % include unit_stats_weapons u=u, db=db
   % end
   % if u.builds:
     <br />

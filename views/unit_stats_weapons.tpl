@@ -1,4 +1,5 @@
 % import webunits
+% suffix = '?version='+db.queryversion if db.queryversion else ''
 % for i, w in enumerate(u.weapons):
   % N = " #{}".format(i+1) if len(u.weapons) > 1 else ""
   % Q = " (x{})".format(w.count) if w.count > 1 else ""
@@ -25,6 +26,6 @@
     % if w.target_layers:
       <li>Targets: {{', '.join(w.target_layers)}}</li>
     % end
-    <li><a href="/json/{{w.safename}}">Blueprint</a></li>
+    <li><a href="/json/{{w.safename}}{{suffix}}">Blueprint</a></li>
   </ul>
 % end
