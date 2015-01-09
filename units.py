@@ -640,6 +640,8 @@ def get_restriction(text):
 
 AVAILABLE_MODS = {}
 def load_mods():
+    if 'mods_root' not in CONFIG:
+        return
     for f in os.listdir(CONFIG['mods_root']):
         infoname = os.path.join(CONFIG['mods_root'], f, 'modinfo.json')
         if os.path.exists(infoname):
@@ -648,6 +650,7 @@ def load_mods():
             AVAILABLE_MODS[modinfo['identifier']] = modinfo
 
 def load_all():
+    load_mods()
     dbs = {v: VersionDb(v) for v in CONFIG.get('versions', ())}
 
     for db in dbs.values():
