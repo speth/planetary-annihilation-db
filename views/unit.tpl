@@ -1,6 +1,6 @@
 % import webunits
 
-% include unit_header u=u, have_icon=have_icon
+% include unit_header u=u, have_icon=have_icon, db=db
 <ul>
   % include unit_stats_basic u=u, db=db
   % if 'Mobile' in u.unit_types:

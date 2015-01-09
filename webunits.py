@@ -158,7 +158,8 @@ AVAILABLE_VERSIONS = sorted(units.CONFIG.get('versions', {}))
 if 'pa_root' in units.CONFIG:
     AVAILABLE_VERSIONS.append('current')
 units.load_mods()
-
+DB_COUNTER = 0
+MAX_DBS = units.CONFIG.get('cache_size', 50)
 
 def get_db(key=None):
     # default version and mods are from the query string
@@ -174,7 +175,19 @@ def get_db(key=None):
     if key not in LOADED_DBS:
         print('loading DB for', key)
         LOADED_DBS[key] = WebUnits(version, mods)
-    return LOADED_DBS[key]
+
+    # Limit the number of loaded databases
+    global DB_COUNTER
+    db = LOADED_DBS[key]
+    db.last_accessed = DB_COUNTER
+    DB_COUNTER += 1
+    if len(LOADED_DBS) >= MAX_DBS:
+        loser = sorted(LOADED_DBS.items(),
+                       key=lambda item: item[1].last_accessed)[0]
+        print('Unloading DB:', loser[0])
+        del LOADED_DBS[loser[0]]
+
+    return db
 
 
 @route('/table/<name>')

@@ -1,7 +1,8 @@
+% suffix = '?version='+db.queryversion if db.queryversion else ''
 <div style="width: 100%; overflow: hidden;">
   % if have_icon:
     <div style="width: 60px; float: left; margin-top:14px">
-      <img src=/build_icons/{{u.safename}} />
+      <img src='/build_icons/{{u.safename}}{{suffix}}' />
     </div>
     <div style="margin-left: 72px;">
   % else:

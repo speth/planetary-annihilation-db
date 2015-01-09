@@ -73,13 +73,13 @@
   </div>
   <div class="row">
     <div class="col-sm-6">
-      % include unit_header u=u1, have_icon=have_icon1
+      % include unit_header u=u1, have_icon=have_icon1, db=db1
       <ul>
         % include unit_stats_basic u=u1, db=db1
       </ul>
     </div>
     <div class="col-sm-6">
-      % include unit_header u=u2, have_icon=have_icon2
+      % include unit_header u=u2, have_icon=have_icon2, db=db2
       <ul>
         % include unit_stats_basic u=u2, db=db2
       </ul>
