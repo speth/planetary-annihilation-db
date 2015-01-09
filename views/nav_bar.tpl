@@ -32,9 +32,9 @@
       %   q['u1'] = unit.safename
       %   q['u2'] = unit.safename
       % end
-      % if db.version != 'current':
-      %   q['v1'] = db.version
-      %   q['v2'] = db.version
+      % if db.queryversion:
+      %   q['v1'] = db.queryversion
+      %   q['v2'] = db.queryversion
       % end
       <li><a href="/compare?{{urllib.parse.urlencode(q)}}">Compare</a></li>
       <li><a href="/about">About</a></li>
