@@ -44,6 +44,7 @@
         </ul>
       </div>
 
+      % if units.AVAILABLE_MODS:
       <div class="btn-group">
         <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
           Mods ({{len(db.active_mods)}} active)
@@ -67,6 +68,7 @@
           % end
         </ul>
       </div>
+      % end
 
     </div>
   % end
