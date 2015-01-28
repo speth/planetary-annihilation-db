@@ -23,6 +23,7 @@ with the path to the Planetary Annihilation 'media' directory:
 ****************************************************************
 """)
     raise
+CONFIG['versions'] = collections.OrderedDict(CONFIG['versions'])
 
 def delocalize(text):
     if text.startswith('!LOC'):

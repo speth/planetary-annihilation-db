@@ -154,7 +154,7 @@ def timestr(val):
 
 
 LOADED_DBS = {}
-AVAILABLE_VERSIONS = sorted(units.CONFIG.get('versions', {}))
+AVAILABLE_VERSIONS = list(units.CONFIG.get('versions', {}))
 if 'pa_root' in units.CONFIG:
     AVAILABLE_VERSIONS.append('current')
 units.load_mods()
