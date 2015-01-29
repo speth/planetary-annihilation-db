@@ -2,11 +2,19 @@ import units
 import tarfile
 import os
 
-def save_db_info(archive_name):
-    pa_root = units.CONFIG['pa_root']
-    archive_root = 'padb-data'
+def save_db_info(pa_root=None):
+    if pa_root:
+        units.CONFIG['pa_root'] = pa_root
+    else:
+        pa_root = units.CONFIG['pa_root']
+
     db = units.VersionDb()
     db.load_units()
+
+    version = open(pa_root +'/../version.txt').read().strip()
+    archive_root = 'units-' + version
+    archive_name = 'units-{}.tar.bz2'.format(version)
+    print('Creating archive: "{}"'.format(archive_name))
 
     with tarfile.open(archive_name, 'w:bz2') as archive:
         archive.add(pa_root + '/pa/units/unit_list.json',
@@ -26,4 +34,10 @@ def save_db_info(archive_name):
 
 if __name__ == '__main__':
     import sys
-    save_db_info(sys.argv[1])
+    if len(sys.argv) == 1:
+        save_db_info()
+    elif len(sys.argv) == 2:
+        save_db_info(sys.argv[1])
+    else:
+        print('Unrecognized command line arguments:', repr(sys.argv[1:]))
+        sys.exit(1)
