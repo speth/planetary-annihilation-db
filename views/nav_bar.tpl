@@ -92,7 +92,7 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{db.version}}<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          % for v in webunits.AVAILABLE_VERSIONS:
+          % for v in reversed(webunits.AVAILABLE_VERSIONS):
             <li><a href="{{webunits.update_version(version=v)}}">{{v}}</a></li>
           % end
         </ul>

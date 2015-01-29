@@ -36,7 +36,7 @@
           Build: {{db.version}} <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="info">
-          % for ver in webunits.AVAILABLE_VERSIONS:
+          % for ver in reversed(webunits.AVAILABLE_VERSIONS):
             <li><a href="{{webunits.update_version(field='v{}'.format(i+1), version=ver)}}">
               {{ver}}
             </a></li>
