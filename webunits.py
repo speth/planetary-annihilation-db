@@ -15,7 +15,7 @@ except ImportError:
         print("Saved Bottle as '{}'".format(savename))
     get_bottle()
 
-from bottle import route, run, template, static_file, request
+from bottle import route, run, template, static_file, request, abort
 
 import os
 import pprint
@@ -23,6 +23,7 @@ import re
 import units
 import itertools
 import collections
+import logging
 
 def show_variants():
     return bool(int(request.get_cookie("show_commander_variants", '0')))
@@ -168,9 +169,19 @@ def get_db(key=None):
 
     version, *mods = key.split(':')
 
-    assert version in AVAILABLE_VERSIONS, version
+    if version not in AVAILABLE_VERSIONS:
+        logging.warning(
+            'No such version: {!r}; headers={!r}, query={!r}'.format(
+                version, dict(request.headers), dict(request.query)))
+        abort(404, "No such version: {!r}".format(version))
+
     for mod in mods:
-        assert mod in units.AVAILABLE_MODS, (mod, units.AVAILABLE_MODS)
+        if mod not in units.AVAILABLE_MODS:
+            logging.warning(
+                'No such mod: {!r}; headers={!r}, query={!r}'.format(
+                    mod, dict(request.headers), dict(request.query)))
+            abort(404, "No such mod: {!r}. Available mods: {!r}".format(
+                mod, list(units.AVAILABLE_MODS)))
 
     if key not in LOADED_DBS:
         print('loading DB for', key)
