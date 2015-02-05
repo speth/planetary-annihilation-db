@@ -33,12 +33,12 @@
 
       <div class="btn-group">
         <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
-          Build: {{db.version}} <span class="caret"></span>
+          Build: {{db.description}} <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="info">
-          % for ver in reversed(webunits.AVAILABLE_VERSIONS):
+          % for ver,desc in reversed(list(webunits.AVAILABLE_VERSIONS.items())):
             <li><a href="{{webunits.update_version(field='v{}'.format(i+1), version=ver)}}">
-              {{ver}}
+              {{desc}}
             </a></li>
           % end
         </ul>

@@ -23,7 +23,17 @@ with the path to the Planetary Annihilation 'media' directory:
 ****************************************************************
 """)
     raise
-CONFIG['versions'] = collections.OrderedDict(CONFIG['versions'])
+
+def get_version(description):
+    return re.sub(r'.*?(\d{4,}).*', r'\1', description)
+
+VERSION_DIRS = collections.OrderedDict()
+DESCRIPTIONS = collections.OrderedDict()
+for description, directory in CONFIG['versions']:
+    version = get_version(description)
+    VERSION_DIRS[version] = directory
+    DESCRIPTIONS[version] = description
+
 
 def delocalize(text):
     if text.startswith('!LOC'):
@@ -35,13 +45,14 @@ def delocalize(text):
 class VersionDb:
     def __init__(self, version='current', active_mods=()):
         self.version = version
+        self.description = DESCRIPTIONS.get(version, version)
         self.active_mods = active_mods
 
         # Directory containing the 'pa' and 'ui' subdirectories
         if version == 'current':
             self.root = CONFIG['pa_root']
         else:
-            self.root = os.path.join(CONFIG['archive_root'], CONFIG['versions'][version])
+            self.root = os.path.join(CONFIG['archive_root'], VERSION_DIRS[version])
 
         # data_dirs includes directories containing files overridden by server mods
         self.mod_dirs = []

@@ -49,14 +49,14 @@ def update_version(version=None, add_mod=None, remove_mod=None, field='version')
     q = getattr(request.query, field)
     items = q.split(':') if q else []
     if not items:
-        items.append(AVAILABLE_VERSIONS[-1])
+        items.append(LATEST_VERSION)
     if add_mod:
         items.append(add_mod)
     if remove_mod:
         items.remove(remove_mod)
     if version:
         items[0] = version
-    if len(items) == 1 and items[0] == AVAILABLE_VERSIONS[-1]:
+    if len(items) == 1 and items[0] == LATEST_VERSION:
         items = []
 
     return update_query(field, ':'.join(items))
@@ -70,7 +70,7 @@ class WebUnits(units.VersionDb):
                       if u.health > 0 and u.build_cost > 0}
         self.sorted_units = sorted(self.units.values(), key=lambda u: u.build_cost)
 
-        if self.version != AVAILABLE_VERSIONS[-1] or self.active_mods:
+        if self.version != LATEST_VERSION or self.active_mods:
             self.queryversion = ':'.join([self.version] + self.active_mods)
         else:
             self.queryversion = None
@@ -155,9 +155,10 @@ def timestr(val):
 
 
 LOADED_DBS = {}
-AVAILABLE_VERSIONS = list(units.CONFIG.get('versions', {}))
+AVAILABLE_VERSIONS = collections.OrderedDict(units.DESCRIPTIONS)
 if 'pa_root' in units.CONFIG:
-    AVAILABLE_VERSIONS.append('current')
+    AVAILABLE_VERSIONS['current'] = 'current'
+LATEST_VERSION = next(reversed(AVAILABLE_VERSIONS))
 units.load_mods()
 DB_COUNTER = 0
 MAX_DBS = units.CONFIG.get('cache_size', 50)
@@ -165,9 +166,10 @@ MAX_DBS = units.CONFIG.get('cache_size', 50)
 def get_db(key=None):
     # default version and mods are from the query string
     if key is None:
-        key = request.query.version or AVAILABLE_VERSIONS[-1]
+        key = request.query.version or LATEST_VERSION
 
-    version, *mods = key.split(':')
+    desc, *mods = key.split(':')
+    version = units.get_version(desc)
 
     if version not in AVAILABLE_VERSIONS:
         logging.warning(
@@ -254,12 +256,12 @@ def callback(name):
 
 @route('/json/<resource>')
 def callback(resource):
-    version = request.query.version or AVAILABLE_VERSIONS[-1]
+    version = request.query.version or LATEST_VERSION
     db = get_db()
     text = pprint.pformat(db.json[db.full_names[resource]])
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.full_names:
-            ver = '?version={}'.format(version) if version != AVAILABLE_VERSIONS[-1] else ''
+            ver = '?version={}'.format(version) if version != LATEST_VERSION else ''
             text = text.replace(item, "<a href='/json/{}{}'>{}</a>".format(key, ver, item))
 
     return template('json', db=db, resource=resource, text=text)
@@ -267,8 +269,8 @@ def callback(resource):
 
 @route('/compare')
 def callback():
-    v1 = request.query.v1 or AVAILABLE_VERSIONS[-1]
-    v2 = request.query.v2 or AVAILABLE_VERSIONS[-1]
+    v1 = request.query.v1 or LATEST_VERSION
+    v2 = request.query.v2 or LATEST_VERSION
     db1 = get_db(v1)
     db2 = get_db(v2)
     u1 = db1.units[request.query.u1 or 'land_scout']
