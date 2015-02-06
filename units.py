@@ -529,8 +529,9 @@ class Weapon(Tool):
                 self.metal_rate = - rate
                 self.metal_per_shot = ammo_per_shot
 
-        self.target_layers = [layer[3:] # strip 'WL_' prefix
-                              for layer in self.raw.pop('target_layers', ())]
+        if 'target_layers' in self.raw:
+            self.target_layers = [layer[3:] # strip 'WL_' prefix
+                                  for layer in self.raw.pop('target_layers', ())]
 
         if self.raw.pop('self_destruct', False):
             self.self_destruct = True
