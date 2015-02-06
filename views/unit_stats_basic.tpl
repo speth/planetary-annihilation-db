@@ -4,5 +4,7 @@
 <li>Build cost: {{u.build_cost}} metal</li>
 % if u.weapons:
   <li>Maximum range: {{max(w.max_range for w in u.weapons)}}</li>
+  % if u.dps:
   <li>Total DPS: {{u.dps}}</li>
+  % end
 % end

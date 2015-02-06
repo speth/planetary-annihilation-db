@@ -300,36 +300,54 @@ class Unit(Thing):
         if 'max_health' in self.raw:
             self.health = self.raw.pop('max_health')
 
-        if 'tools' in self.raw:
+        if 'tools' in self.raw or 'death_weapon' in self.raw:
             self.weapons = []
             self.build_arms = []
             self.misc_tools = []
 
-            tools = collections.Counter(tool['spec_id']
-                                        for tool in self.raw.pop('tools', ()))
-            for resource,count in tools.items():
-                tool_name = resource.rsplit('/')[-1].split('.')[0]
+            tools = {}
+            for tool in self.raw.pop('tools', ()):
+                resource = tool['spec_id']
+                if resource in tools:
+                    tools[resource]['count'] += 1
+                else:
+                    tools[resource] = tool
+                    tools[resource]['count'] = 1
+
+            # The information available to identify tool types has changed over
+            # the builds, so there are multiple selection criteria for some tool
+            # types.
+            for resource,tool in tools.items():
+                name = tool['spec_id'].rsplit('/')[-1].split('.')[0]
                 try:
-                    if 'weapon' in tool_name:
+                    if ('weapon' in name or 'primary_weapon' in name or
+                        'aim_weapon' in name or 'secondary_weapon' in name):
                         self.weapons.append(Weapon(self.db, resource))
-                        self.weapons[-1].count = count
-                    elif 'build_arm' in tool_name:
+                        self.weapons[-1].count = tool['count']
+                    elif 'build_arm' in name or tool.get('build_arm'):
                         self.build_arms.append(BuildArm(self.db, resource))
-                        self.build_arms[-1].count = count
+                        self.build_arms[-1].count = tool['count']
                     else:
                         test = Tool(self.db, resource)
                         if test.tool_type == 'TOOL_Weapon':
                             self.weapons.append(Weapon(self.db, resource))
-                            self.weapons[-1].count = count
+                            self.weapons[-1].count = tool['count']
                         else:
                             print('unclassified tool for {}: {}'.format(
-                                  self.name, resource))
+                                  self.name, tool))
                             self.misc_tools.append(test)
-                            self.misc_tools[-1].count = count
+                            self.misc_tools[-1].count = tool['count']
                 except IOError:
                     pass
 
-        self.dps = sum(w.dps*w.count for w in self.weapons)
+            death_weapon = self.raw.pop('death_weapon', {})
+            if 'ground_ammo_spec' in death_weapon:
+                self.weapons.append(Weapon(self.db,
+                                           death_weapon['ground_ammo_spec']))
+                self.weapons[-1].count = 1
+
+        self.dps = sum(w.dps*w.count for w in self.weapons
+                       if not w.death_explosion and not w.self_destruct)
         self.salvo_damage = sum(w.damage*w.count for w in self.weapons)
 
         # Economy
@@ -459,6 +477,8 @@ class Weapon(Tool):
     splash_radius = 0
     max_range = 0
     count = 1
+    self_destruct = False
+    death_explosion = False
 
     metal_rate = 0
     energy_rate = 0
@@ -476,6 +496,12 @@ class Weapon(Tool):
         self.name = self.safename
 
         ammo_id = self.raw.pop('ammo_id', None)
+
+        # Combine Ammo / weapon info for death explosions
+        if ammo_id is None and 'ammo_type' in self.raw:
+            ammo_id = resource_name
+            self.death_explosion = True
+
         if ammo_id:
             if not isinstance(ammo_id, str):
                 # Weird inconsistency with assault_bot_tool_weapon in 71459
@@ -505,6 +531,9 @@ class Weapon(Tool):
 
         self.target_layers = [layer[3:] # strip 'WL_' prefix
                               for layer in self.raw.pop('target_layers', ())]
+
+        if self.raw.pop('self_destruct', False):
+            self.self_destruct = True
 
     def __repr__(self):
         return '<Weapon: {} {!r}>'.format(self.safename, self.name)
