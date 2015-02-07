@@ -22,8 +22,8 @@
     % if w.full_damage_radius:
       <li>Full damage radius: {{w.full_damage_radius}}</li>
     % end
-    % if w.splash_damage:
-      <li>Splash: {{w.splash_damage}} damage, radius {{w.splash_radius}}</li>
+    % if w.splash_radius:
+      <li>Splash: {{w.splash_damage or w.damage}} damage, radius {{w.splash_radius}}</li>
     % end
     % if w.muzzle_velocity:
       <li>Muzzle velocity: {{w.muzzle_velocity}}</li>
