@@ -176,4 +176,4 @@
 
 </div>
 
-% rebase page db=db1, hide_nav_version=True
+% rebase page db=db1, hide_nav_version=True, title='Compare'

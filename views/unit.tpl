@@ -28,4 +28,4 @@
     % include unit_stats_builtby u=u, db=db
   % end
 </ul>
-% rebase page db=db, unit=u
+% rebase page db=db, unit=u, title=u.name
