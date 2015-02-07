@@ -349,6 +349,7 @@ class Unit(Thing):
                 self.weapons.append(Weapon(self.db,
                                            death_weapon['ground_ammo_spec']))
                 self.weapons[-1].count = 1
+                self.weapons[-1].death_explosion = True
 
         self.dps = sum(w.dps*w.count for w in self.weapons
                        if not w.death_explosion and not w.self_destruct)
@@ -505,7 +506,6 @@ class Weapon(Tool):
         # Combine Ammo / weapon info for death explosions
         if ammo_id is None and 'ammo_type' in self.raw:
             ammo_id = resource_name
-            self.death_explosion = True
 
         if ammo_id:
             if not isinstance(ammo_id, str):
