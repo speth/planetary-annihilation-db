@@ -17,7 +17,10 @@
     % if not w.self_destruct and not w.death_explosion:
       <li>Damage: {{w.dps}} DPS: {{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{w.rof}} shots per second)</li>
     % else:
-    <li>Damage: {{w.damage}}</li>
+      <li>Damage: {{w.damage}}</li>
+    % end
+    % if w.full_damage_radius:
+      <li>Full damage radius: {{w.full_damage_radius}}</li>
     % end
     % if w.splash_damage:
       <li>Splash: {{w.splash_damage}} damage, radius {{w.splash_radius}}</li>

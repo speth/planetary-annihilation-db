@@ -475,6 +475,7 @@ class Weapon(Tool):
     muzzle_velocity = 0.0
     splash_damage = 0.0
     splash_radius = 0
+    full_damage_radius = 0
     max_range = 0
     count = 1
     self_destruct = False
@@ -512,6 +513,7 @@ class Weapon(Tool):
             self.muzzle_velocity = self.ammo.muzzle_velocity
             self.splash_damage = self.ammo.splash_damage
             self.splash_radius = self.ammo.splash_radius
+            self.full_damage_radius = self.ammo.full_damage_radius
 
         if 'max_range' in self.raw:
             self.max_range = self.raw.pop('max_range')
@@ -542,6 +544,7 @@ class Weapon(Tool):
 
 class Ammo(Thing):
     damage = 0.0
+    full_damage_radius = 0
     splash_damage = 0.0
     splash_radius = 0
     muzzle_velocity = 0
@@ -555,6 +558,8 @@ class Ammo(Thing):
         self.name = self.resource_name.rsplit('/', 1)[1].split('.')[0]
         if 'damage' in self.raw:
             self.damage = self.raw.pop('damage')
+        if 'full_damage_splash_radius' in self.raw:
+            self.full_damage_radius = self.raw.pop('full_damage_splash_radius')
         if 'splash_damage' in self.raw:
             self.splash_damage = self.raw.pop('splash_damage')
         if 'splash_radius' in self.raw:
