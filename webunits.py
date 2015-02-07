@@ -24,6 +24,7 @@ import units
 import itertools
 import collections
 import logging
+import html
 
 def show_variants():
     return bool(int(request.get_cookie("show_commander_variants", '0')))
@@ -258,7 +259,7 @@ def callback(name):
 def callback(resource):
     version = request.query.version or LATEST_VERSION
     db = get_db()
-    text = pprint.pformat(db.json[db.full_names[resource]])
+    text = html.escape(pprint.pformat(db.json[db.full_names[resource]]), False)
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.full_names:
             ver = '?version={}'.format(version) if version != LATEST_VERSION else ''
