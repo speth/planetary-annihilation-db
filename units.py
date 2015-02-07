@@ -324,6 +324,8 @@ class Unit(Thing):
                         'aim_weapon' in name or 'secondary_weapon' in name):
                         self.weapons.append(Weapon(self.db, resource))
                         self.weapons[-1].count = tool['count']
+                        if 'death_weapon' in tool:
+                            self.weapons[-1].death_explosion = True
                     elif 'build_arm' in name or tool.get('build_arm'):
                         self.build_arms.append(BuildArm(self.db, resource))
                         self.build_arms[-1].count = tool['count']
@@ -332,6 +334,8 @@ class Unit(Thing):
                         if test.tool_type == 'TOOL_Weapon':
                             self.weapons.append(Weapon(self.db, resource))
                             self.weapons[-1].count = tool['count']
+                            if 'death_weapon' in tool:
+                                self.weapons[-1].death_explosion = True
                         else:
                             print('unclassified tool for {}: {}'.format(
                                   self.name, tool))
