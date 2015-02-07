@@ -507,7 +507,7 @@ class Weapon(Tool):
                 # Weird inconsistency with assault_bot_tool_weapon in 71459
                 ammo_id = ammo_id[0]['id']
             self.ammo = Ammo(self.db, ammo_id)
-            self.damage = self.ammo.damage + self.ammo.splash_damage
+            self.damage = self.ammo.damage
             self.dps = self.rof * self.damage
             self.muzzle_velocity = self.ammo.muzzle_velocity
             self.splash_damage = self.ammo.splash_damage
