@@ -346,10 +346,13 @@ class Unit(Thing):
 
             death_weapon = self.raw.pop('death_weapon', {})
             if 'ground_ammo_spec' in death_weapon:
-                self.weapons.append(Weapon(self.db,
-                                           death_weapon['ground_ammo_spec']))
-                self.weapons[-1].count = 1
-                self.weapons[-1].death_explosion = True
+                w = Weapon(self.db, death_weapon['ground_ammo_spec'])
+                w.count = 1
+                w.death_explosion = True
+                # Keep a reference to this in case it becomes interesting
+                if 'air_ammo_spec' in death_weapon:
+                    w.air_ammo = Ammo(self.db, death_weapon['air_ammo_spec'])
+                self.weapons.append(w)
 
         self.dps = sum(w.dps*w.count for w in self.weapons
                        if not w.death_explosion and not w.self_destruct)
