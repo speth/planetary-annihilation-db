@@ -2,7 +2,7 @@ import units
 import tarfile
 import os
 
-def save_db_info(pa_root=None):
+def save_db_info(pa_root=None, version=None):
     if pa_root:
         units.CONFIG['pa_root'] = pa_root
     else:
@@ -11,7 +11,9 @@ def save_db_info(pa_root=None):
     db = units.VersionDb()
     db.load_units()
 
-    version = open(pa_root +'/../version.txt').read().strip()
+    if version is None:
+        version = open(pa_root +'/../version.txt').read().strip()
+
     archive_root = 'units-' + version
     archive_name = 'units-{}.tar.bz2'.format(version)
     print('Creating archive: "{}"'.format(archive_name))
@@ -36,8 +38,8 @@ if __name__ == '__main__':
     import sys
     if len(sys.argv) == 1:
         save_db_info()
-    elif len(sys.argv) == 2:
-        save_db_info(sys.argv[1])
+    elif len(sys.argv) <= 3:
+        save_db_info(*sys.argv[1:])
     else:
         print('Unrecognized command line arguments:', repr(sys.argv[1:]))
         sys.exit(1)
