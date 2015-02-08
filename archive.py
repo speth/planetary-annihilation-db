@@ -23,8 +23,11 @@ def save_db_info(pa_root=None, version=None):
                     arcname=archive_root + '/pa/units/unit_list.json')
 
         for filename in db._things:
-            archive.add(pa_root + filename,
-                        arcname=archive_root + filename)
+            if os.path.exists(pa_root + filename):
+                archive.add(pa_root + filename,
+                            arcname=archive_root + filename)
+            else:
+                print('WARNING: missing file {!r}'.format(filename))
 
         path_tmpl = '/ui/{}/live_game/img/build_bar/units/{}.png'
         for unit in db.units.values():
