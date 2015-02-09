@@ -149,11 +149,13 @@ class WebUnits(units.VersionDb):
 
 def timestr(val):
     """ Convert a time in seconds into string with the format '[m]m:ss'."""
-    val = int(val)
-    minutes = val // 60
-    seconds = val % 60
-    return '{}:{:02}'.format(minutes, seconds)
-
+    if val > 3:
+        val = int(val)
+        minutes = val // 60
+        seconds = val % 60
+        return '{}:{:02}'.format(minutes, seconds)
+    else:
+        return '0:{:04.1f}'.format(val)
 
 LOADED_DBS = {}
 AVAILABLE_VERSIONS = collections.OrderedDict(units.DESCRIPTIONS)
