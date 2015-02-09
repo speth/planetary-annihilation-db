@@ -1,3 +1,4 @@
+% suffix = '?version='+db.queryversion if db.queryversion else ''
 % if caption:
 <h1>{{caption}}</h1>
 % end
@@ -14,7 +15,7 @@
     % for row in data:
     <tr>
       <td>
-        <img class="unit-icon" src="/build_icons/{{row[0].safename}}" />
+        <img class="unit-icon" src="/build_icons/{{row[0].safename}}{{suffix}}" />
       </td>
       <td>
         % include unit_link unit=row[0], db=db
