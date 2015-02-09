@@ -35,13 +35,7 @@
         <button type="button" class="btn btn-sm btn-success dropdown-toggle" data-toggle="dropdown">
           Build: {{db.description}} <span class="caret"></span>
         </button>
-        <ul class="dropdown-menu" role="info">
-          % for ver,desc in reversed(list(webunits.AVAILABLE_VERSIONS.items())):
-            <li><a href="{{webunits.update_version(field='v{}'.format(i+1), version=ver)}}">
-              {{desc}}
-            </a></li>
-          % end
-        </ul>
+        % include version_dropdown db=db, field='v{}'.format(i+1)
       </div>
 
       % if units.AVAILABLE_MODS:

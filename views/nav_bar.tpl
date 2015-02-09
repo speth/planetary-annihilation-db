@@ -91,11 +91,7 @@
       % if not hide_version:
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{db.description}}<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          % for v,desc in reversed(list(webunits.AVAILABLE_VERSIONS.items())):
-            <li><a href="{{webunits.update_version(version=v)}}">{{desc}}</a></li>
-          % end
-        </ul>
+        % include version_dropdown db=db, field='version'
       </li>
       % end
     </ul>

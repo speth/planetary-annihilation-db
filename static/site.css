@@ -81,3 +81,21 @@ pre > a {
     font-weight: bold;
     text-decoration: underline;
 }
+
+/* for hiding/showing elements in long dropdown-menu */
+ul.hide-excess.show-before > li.ldots-before {
+    display: none;
+}
+ul.hide-excess.hide-before > li.hide-before {
+    display: none;
+}
+
+ul.hide-excess.show-after > li.ldots-after {
+    display: none;
+}
+ul.hide-excess.hide-after > li.hide-after {
+    display: none;
+}
+ul.hide-excess > li.current-version > a {
+    font-weight: bold;
+}
