@@ -516,7 +516,7 @@ class Weapon(Tool):
                 ammo_id = ammo_id[0]['id']
             self.ammo = Ammo(self.db, ammo_id)
             self.damage = self.ammo.damage
-            self.dps = self.rof * self.damage
+            self.dps = round(self.rof * self.damage, 2)
             self.muzzle_velocity = self.ammo.muzzle_velocity
             self.splash_damage = self.ammo.splash_damage
             self.splash_radius = self.ammo.splash_radius
@@ -530,7 +530,7 @@ class Weapon(Tool):
             if 'ammo_demand' in self.raw:
                 self.ammo_demand = self.raw.pop('ammo_demand')
             ammo_per_shot = self.raw.pop('ammo_per_shot', 0)
-            rate = min(self.ammo_demand, ammo_per_shot * self.rof)
+            rate = min(self.ammo_demand, round(ammo_per_shot * self.rof, 2))
             if ammo_source == 'energy':
                 self.energy_rate = - rate
                 self.energy_per_shot = ammo_per_shot

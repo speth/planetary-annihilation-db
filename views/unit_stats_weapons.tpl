@@ -29,10 +29,10 @@
       <li>Muzzle velocity: {{w.muzzle_velocity}}</li>
     % end
     % if w.metal_per_shot:
-      <li>Metal consumption: {{w.metal_per_shot}} per shot ({{w.metal_per_shot * w.rof}} per second)</li>
+      <li>Metal consumption: {{w.metal_per_shot}} per shot ({{round(w.metal_per_shot * w.rof, 2)}} per second)</li>
     % end
     % if w.energy_per_shot:
-      <li>Energy consumption: {{w.energy_per_shot}} per shot ({{w.energy_per_shot * w.rof}} per second)</li>
+      <li>Energy consumption: {{w.energy_per_shot}} per shot ({{round(w.energy_per_shot * w.rof, 2)}} per second)</li>
     % end
     % if w.ammo and w.ammo.metal_cost:
       <li>Metal cost: {{w.ammo.metal_cost}} per shot</li>
