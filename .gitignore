@@ -1,3 +1,5 @@
 __pycache__
 bottle.py
 padb.json
+units-*/
+units-*.tar.bz2
