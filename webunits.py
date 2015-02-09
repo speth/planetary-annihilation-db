@@ -210,35 +210,12 @@ def get_db(key=None):
 def callback(name):
     db = get_db()
     caption, columns, data_function, categories = db.unit_groups[name]
-    return template('unit_table_single',
+    return template('unit_table',
                     caption=caption,
                     columns=columns,
                     data=data_function(categories),
                     db=db)
 
-@route('/table/all')
-def callback():
-    db = get_db()
-    table_data = {}
-    tables = []
-    for group,(caption, columns, data_function, categories) in db.unit_groups.items():
-        table_data[group] = data_function(categories)
-        tables.append(template('unit_table', caption=caption,
-                               columns=columns, data=table_data[group],
-                               db=db))
-
-    # Check to make sure we didn't forget anything important
-    other2 = set(db.units.values())
-    for u,*cols in itertools.chain.from_iterable(table_data.values()):
-        other2.discard(u)
-
-    if other2:
-        leftover_data = [(u, u.build_cost, u.dps, u.health) for u in other2]
-        leftover = template('unit_table', caption='Uncategorized Units',
-                            columns=unit_cols, data=leftover_data, db=db)
-        tables.append(leftover)
-
-    return template('unitlist', db=db, tables=tables)
 
 @route('/')
 def callback():

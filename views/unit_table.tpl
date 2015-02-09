@@ -28,3 +28,4 @@
     % end
   </tbody>
 </table>
+% rebase page title=caption, db=db
