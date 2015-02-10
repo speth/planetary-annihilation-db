@@ -1,3 +1,21 @@
+"""
+archive.py
+
+Generate an archive of the data files used by PADB from an installed copy of
+Planetary Annihilation. Generates a bzip archive named 'units-VERISON.tar.bz2'
+which contains the relevant files in a directory named 'units-VERSION', which
+can be added as an entry in padb.json.
+
+Usage:
+
+    python3 archive.py [pa_root [version]]
+
+* pa_root - The path to the PA "media" directory. If not specified, the path
+            specified in padb.json will be used.
+
+* version - A string identifying the version of PA. If not specified, this will
+            be read from the 'version.txt' file in the PA directory.
+"""
 import units
 import tarfile
 import os
@@ -39,6 +57,10 @@ def save_db_info(pa_root=None, version=None):
 
 if __name__ == '__main__':
     import sys
+    if '-h' in sys.argv or '--help' in sys.argv:
+        print(__doc__)
+        sys.exit(0)
+
     if len(sys.argv) == 1:
         save_db_info()
     elif len(sys.argv) <= 3:
