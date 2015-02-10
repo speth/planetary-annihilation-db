@@ -231,6 +231,9 @@ def callback():
 def callback(name):
     db = get_db()
     have_icon = bool(db.get_icon_path(name))
+    if name not in db.units:
+        abort(404, "No such unit {!r} in version {!r}".format(
+            name, db.version))
     return template('unit', u=db.units[name], have_icon=have_icon, db=db)
 
 
