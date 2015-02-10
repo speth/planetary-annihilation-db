@@ -12,13 +12,18 @@ except IOError:
     print("""
 ****************************************************************
 Error reading configuration. Create a file named 'padb.json'
-in the current directory with an entry in the following format,
-with the path to the Planetary Annihilation 'media' directory:
+in the current directory with an entry in the following format:
 
 {
     "pa_root": "C:/Path/To/PlanetaryAnnihilation/PA/media",
-    "versions": ["current": ""]
+    "archive_root": "C:/Path/To/Archived/Files",
+    "mods_root": "C:/Path/to/server_mods/directory",
+    "versions": [["73823", "units-73823"],
+                 ["76766", "units-76766"]]
 }
+
+At least one of "pa_root" or "versions" must be supplied. See README.md for
+additional information.
 
 ****************************************************************
 """)
