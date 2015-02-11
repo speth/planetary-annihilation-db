@@ -500,6 +500,11 @@ class Weapon(Tool):
     energy_per_shot = 0
     ammo_demand = 0
 
+    yaw_range = 0
+    yaw_rate = 0
+    pitch_rate = 0
+    pitch_range = 0
+
     target_layers = ()
 
     def __init__(self, db, resource_name):
@@ -549,6 +554,15 @@ class Weapon(Tool):
 
         if self.raw.pop('self_destruct', False):
             self.self_destruct = True
+
+        if 'yaw_range' in self.raw:
+            self.yaw_range = self.raw.pop('yaw_range')
+        if 'yaw_rate' in self.raw:
+            self.yaw_rate = self.raw.pop('yaw_rate')
+        if 'pitch_range' in self.raw:
+            self.pitch_range = self.raw.pop('pitch_range')
+        if 'pitch_rate' in self.raw:
+            self.pitch_rate = self.raw.pop('pitch_rate')
 
     def __repr__(self):
         return '<Weapon: {} {!r}>'.format(self.safename, self.name)
