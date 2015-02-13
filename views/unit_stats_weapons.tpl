@@ -31,6 +31,7 @@
     % if w.yaw_rate:
       <li>Yaw: {{w.yaw_range}}&deg; at {{w.yaw_rate}}&deg; per second</li>
       <li>Pitch: {{w.pitch_range}}&deg; at {{w.pitch_rate}}&deg; per second</li>
+    % end
     % if w.metal_per_shot:
       <li>Metal consumption: {{w.metal_per_shot}} per shot ({{round(w.metal_per_shot * w.rof, 2)}} per second)</li>
     % end
