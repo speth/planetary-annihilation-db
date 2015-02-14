@@ -9,6 +9,9 @@
       % if u.orbital_vision_radius:
         <li>Orbital vision radius: {{u.orbital_vision_radius}}</li>
       % end
+      % if u.mine_vision_radius:
+        <li>Mine vision radius: {{u.mine_vision_radius}}</li>
+      % end
       % if u.radar_radius:
         <li>Radar radius: {{u.radar_radius}}</li>
       % end

@@ -253,6 +253,7 @@ class Unit(Thing):
     vision_radius = 0
     underwater_vision_radius = 0
     orbital_vision_radius = 0
+    mine_vision_radius = 0
     radar_radius = 0
     sonar_radius = 0
     orbital_radar_radius = 0
@@ -429,6 +430,8 @@ class Unit(Thing):
                     self.underwater_vision_radius = item['radius']
                 elif item['layer'] == 'orbital':
                     self.orbital_vision_radius = item['radius']
+                elif item['layer'] == 'mine':
+                    self.mine_vision_radius = item['radius']
                 elif item['layer'] == 'celestial':
                     pass # not sure what this is...
                 else:
