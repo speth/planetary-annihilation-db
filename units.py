@@ -231,6 +231,7 @@ class Thing:
 class Unit(Thing):
     unit_types = ()
     buildable_types = ''
+    assist_buildable_only = None
     spawn_layers = ()
     amphibious = False
     build_cost = 0
@@ -297,6 +298,9 @@ class Unit(Thing):
 
         if 'buildable_types' in self.raw:
             self.buildable_types = self.raw.pop('buildable_types')
+
+        if 'can_only_assist_with_buildable_items' in self.raw:
+            self.assist_buildable_only = self.raw.pop('can_only_assist_with_buildable_items')
 
         self.builds = set()
         self.built_by = set()

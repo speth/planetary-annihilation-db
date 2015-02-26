@@ -27,6 +27,9 @@
     % if u.build_rate:
       <li>Build rate: {{u.build_rate}}</li>
     % end
+    % if u.assist_buildable_only:
+      <li>Can only assist building items it can build</li>
+    % end
     % if u.tool_consumption.metal:
       <li>Fabrication metal consumption: {{u.tool_consumption.metal}} / s</li>
     % end
