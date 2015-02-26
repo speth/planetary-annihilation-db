@@ -30,6 +30,9 @@
     % if u.assist_buildable_only:
       <li>Can only assist building items it can build</li>
     % end
+    % if u.build_range:
+      <li>Build range: {{u.build_range}}</li>
+    % end
     % if u.tool_consumption.metal:
       <li>Fabrication metal consumption: {{u.tool_consumption.metal}} / s</li>
     % end

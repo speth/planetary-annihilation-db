@@ -231,6 +231,7 @@ class Thing:
 class Unit(Thing):
     unit_types = ()
     buildable_types = ''
+    build_range = 0
     assist_buildable_only = None
     spawn_layers = ()
     amphibious = False
@@ -367,6 +368,8 @@ class Unit(Thing):
         self.dps = sum(w.dps*w.count for w in self.weapons
                        if not w.death_explosion and not w.self_destruct)
         self.salvo_damage = sum(w.damage*w.count for w in self.weapons)
+        if self.build_arms:
+            self.build_range = max(arm.range for arm in self.build_arms)
 
         # Economy
         for field in ('consumption', 'production', 'storage'):
@@ -613,6 +616,7 @@ class Ammo(Thing):
 class BuildArm(Tool):
     metal_consumption = 0
     energy_consumption = 0
+    range = 0
 
     def __init__(self, db, resource_name):
         super().__init__(db, resource_name)
@@ -623,6 +627,8 @@ class BuildArm(Tool):
             self.metal_consumption = demand.get('metal')
         if 'energy' in demand:
             self.energy_consumption = demand.get('energy')
+        if 'max_range' in self.raw:
+            self.range = self.raw.pop('max_range')
 
     def __repr__(self):
         return '<Build Arm: {} {!r}>'.format(self.safename, self.name)
