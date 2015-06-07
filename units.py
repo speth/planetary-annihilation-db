@@ -252,6 +252,9 @@ class Unit(Thing):
     variant = False
     accessible = False
 
+    unit_storage = 0
+    stored_unit_type = 'unit'
+
     vision_radius = 0
     underwater_vision_radius = 0
     orbital_vision_radius = 0
@@ -410,6 +413,13 @@ class Unit(Thing):
             self.weapon_consumption.energy -= weapon.energy_rate * weapon.count
 
         self.base_template = self.safename.startswith('base_')
+
+        factory = self.raw.get('factory')
+        if factory and factory.get('store_units'):
+            spawn_points = factory.get('spawn_points', ())
+            self.unit_storage = len(spawn_points)
+            if self.unit_storage and 'missile' in spawn_points[0]:
+                self.stored_unit_type = 'missile'
 
         nav = self.raw.get('navigation', {})
         if 'move_speed' in nav:
