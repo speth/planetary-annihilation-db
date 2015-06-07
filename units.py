@@ -559,7 +559,7 @@ class Weapon(Tool):
                 self.metal_per_shot = ammo_per_shot
 
         if 'target_layers' in self.raw:
-            self.target_layers = [layer[3:] # strip 'WL_' prefix
+            self.target_layers = [layer[3:] if layer.startswith('WL_') else layer
                                   for layer in self.raw.pop('target_layers', ())]
 
         if self.raw.pop('self_destruct', False):
