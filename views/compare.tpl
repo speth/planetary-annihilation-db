@@ -88,6 +88,7 @@
     </div>
   </div>
 
+  % if 'Mobile' in u1.unit_types or 'Mobile' in u2.unit_types:
   <div class="row">
     <div class="col-sm-6">
       <ul>
@@ -100,6 +101,7 @@
       </ul>
     </div>
   </div>
+  % end
 
   <div class="row">
     <div class="col-sm-6">
