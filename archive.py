@@ -32,16 +32,32 @@ def save_db_info(pa_root=None, version=None):
     if version is None:
         version = open(pa_root +'/../version.txt').read().strip()
 
-    archive_root = 'units-' + version
-    archive_name = 'units-{}.tar.bz2'.format(version)
+    expansion = units.CONFIG.get('expansion', None)
+    if expansion:
+        archive_name = 'units-{}-{}.tar.bz2'.format(version, expansion)
+        archive_root = 'units-{}-{}'.format(version, expansion)
+    else:
+        archive_name = 'units-{}.tar.bz2'.format(version)
+        archive_root = 'units-{}'.format(version)
+
     print('Creating archive: "{}"'.format(archive_name))
 
     with tarfile.open(archive_name, 'w:bz2') as archive:
-        archive.add(pa_root + '/pa/units/unit_list.json',
+        unitlist = '/{}/units/unit_list.json'.format(expansion or 'pa')
+        archive.add(pa_root + unitlist,
                     arcname=archive_root + '/pa/units/unit_list.json')
 
         for filename in db._things:
-            if os.path.exists(pa_root + filename):
+            if expansion and filename.startswith('/pa/'):
+                expname = '/{}/{}'.format(expansion, filename[4:])
+            else:
+                expname = None
+
+            if expname and os.path.exists(pa_root + expname):
+                # add from the expansion, using the base name
+                archive.add(pa_root + expname,
+                            arcname=archive_root + filename)
+            elif os.path.exists(pa_root + filename):
                 archive.add(pa_root + filename,
                             arcname=archive_root + filename)
             else:
@@ -58,8 +74,14 @@ def save_db_info(pa_root=None, version=None):
 
             # new icon paths
             subdir = unit.resource_name.split('/')[3]
-            iconpath = '/pa/units/{0}/{1}/{1}_icon_buildbar.png'.format(subdir, unit.safename)
-            if os.path.exists(pa_root + iconpath):
+            iconpath = '/pa/units/{0}/{1}/{1}_icon_buildbar.png'.format(
+                subdir, unit.safename)
+            exp_iconpath = '/{2}/units/{0}/{1}/{1}_icon_buildbar.png'.format(
+                subdir, unit.safename, expansion)
+            if os.path.exists(pa_root + exp_iconpath):
+                archive.add(pa_root + exp_iconpath,
+                            arcname=archive_root + iconpath)
+            elif os.path.exists(pa_root + iconpath):
                 archive.add(pa_root + iconpath,
                             arcname=archive_root + iconpath)
 

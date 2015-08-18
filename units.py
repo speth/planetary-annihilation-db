@@ -16,6 +16,7 @@ in the current directory with an entry in the following format:
 
 {
     "pa_root": "C:/Path/To/PlanetaryAnnihilation/PA/media",
+    "expansion": "pa_ex1",
     "archive_root": "C:/Path/To/Archived/Files",
     "mods_root": "C:/Path/to/server_mods/directory",
     "versions": [["73823", "units-73823"],
@@ -23,7 +24,8 @@ in the current directory with an entry in the following format:
 }
 
 At least one of "pa_root" or "versions" must be supplied. See README.md for
-additional information.
+additional information. The "expansion" flag only applies to the active build,
+not to archived versions. Archives are generated separately for each expansion.
 
 ****************************************************************
 """)
@@ -50,10 +52,16 @@ def delocalize(text):
 
 
 class VersionDb:
-    def __init__(self, version='current', active_mods=()):
+    def __init__(self, version='current', active_mods=(), expansion=None):
         self.version = version
         self.description = DESCRIPTIONS.get(version, version)
         self.active_mods = active_mods
+
+        # None or the name of the directory which shadows 'pa', e.g. 'pa_ex1'
+        if version =='current':
+            self.expansion = CONFIG.get("expansion", None)
+        else:
+            self.expansion = None
 
         # Directory containing the 'pa' and 'ui' subdirectories
         if version == 'current':
@@ -112,13 +120,21 @@ class VersionDb:
         if resource_name in self.json:
             return self.json[resource_name]
 
-        for directory in self.data_dirs:
-            path = directory + resource_name
-            if os.path.exists(path):
-                with open(path) as datafile:
-                    j = json.load(datafile)
-                    self.json[resource_name] = j
-                    return j
+        if self.expansion and resource_name.startswith('/pa/'):
+            names = ('/{}/{}'.format(self.expansion, resource_name[4:]),
+                     resource_name)
+        else:
+            names = (resource_name,)
+
+        for resource_name in names:
+            for directory in self.data_dirs:
+                path = directory + resource_name
+                if os.path.exists(path):
+                    with open(path) as datafile:
+                        j = json.load(datafile)
+                        for name in names:
+                            self.json[name] = j
+                        return j
 
         print('failed to load {!r} (version {})'.format(resource_name, self.version))
         self.json[resource_name] = {}
@@ -162,7 +178,11 @@ class VersionDb:
             commander.set_accessible()
 
     def load_units(self):
-        unitlist = json.load(open(self.root + '/pa/units/unit_list.json'))['units']
+        if self.expansion is None:
+            unitfile = '/pa/units/unit_list.json'
+        else:
+            unitfile = '/{}/units/unit_list.json'.format(self.expansion)
+        unitlist = json.load(open(self.root + unitfile))['units']
         for u in unitlist:
             Unit(self, u)
         self.build_build_tree()

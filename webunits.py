@@ -110,12 +110,14 @@ class WebUnits(units.VersionDb):
                 yield u
 
     def get_icon_path(self, unit):
-        path_tmpl = ['/pa/units/{subdir}/{name}/{name}_icon_buildbar.png',
+        path_tmpl = ['/{exp}/units/{subdir}/{name}/{name}_icon_buildbar.png',
+                     '/pa/units/{subdir}/{name}/{name}_icon_buildbar.png',
                      '/ui/main/game/live_game/img/build_bar/units/{name}.png',
-                     '/ui/alpha/live_game/img/build_bar/units/{name}.png',]
+                     '/ui/alpha/live_game/img/build_bar/units/{name}.png']
         subdir = unit.resource_name.split('/')[3]
         for tmpl in path_tmpl:
-            filename = tmpl.format(name=unit.safename, subdir=subdir)
+            filename = tmpl.format(name=unit.safename, subdir=subdir,
+                                   exp=self.expansion or 'pa')
             if os.path.exists(self.root + filename):
                 return filename
 
@@ -245,7 +247,7 @@ def callback(name):
 def callback(resource):
     version = request.query.version or LATEST_VERSION
     db = get_db()
-    text = html.escape(pprint.pformat(db.json[db.full_names[resource]]), False)
+    text = html.escape(pprint.pformat(db.get_json(db.full_names[resource])), False)
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.full_names:
             ver = '?version={}'.format(version) if version != LATEST_VERSION else ''
