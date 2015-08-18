@@ -49,11 +49,20 @@ def save_db_info(pa_root=None, version=None):
 
         path_tmpl = '/ui/{}/live_game/img/build_bar/units/{}.png'
         for unit in db.units.values():
+            # old icon paths
             for directory in ('main/game', 'alpha'):
                 iconpath = path_tmpl.format(directory, unit.safename)
                 if os.path.exists(pa_root + iconpath):
                     archive.add(pa_root + iconpath,
                                 arcname=archive_root + iconpath)
+
+            # new icon paths
+            subdir = unit.resource_name.split('/')[3]
+            iconpath = '/pa/units/{0}/{1}/{1}_icon_buildbar.png'.format(subdir, unit.safename)
+            if os.path.exists(pa_root + iconpath):
+                archive.add(pa_root + iconpath,
+                            arcname=archive_root + iconpath)
+
 
 if __name__ == '__main__':
     import sys

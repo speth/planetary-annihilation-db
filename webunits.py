@@ -109,10 +109,13 @@ class WebUnits(units.VersionDb):
                     continue
                 yield u
 
-    def get_icon_path(self, unit_name):
-        path_tmpl = '/ui/{}/live_game/img/build_bar/units/{}.png'
-        for directory in ('main/game', 'alpha'):
-            filename = path_tmpl.format(directory, unit_name)
+    def get_icon_path(self, unit):
+        path_tmpl = ['/pa/units/{subdir}/{name}/{name}_icon_buildbar.png',
+                     '/ui/main/game/live_game/img/build_bar/units/{name}.png',
+                     '/ui/alpha/live_game/img/build_bar/units/{name}.png',]
+        subdir = unit.resource_name.split('/')[3]
+        for tmpl in path_tmpl:
+            filename = tmpl.format(name=unit.safename, subdir=subdir)
             if os.path.exists(self.root + filename):
                 return filename
 
@@ -230,11 +233,12 @@ def callback():
 @route('/unit/<name>')
 def callback(name):
     db = get_db()
-    have_icon = bool(db.get_icon_path(name))
     if name not in db.units:
         abort(404, "No such unit {!r} in version {!r}".format(
             name, db.version))
-    return template('unit', u=db.units[name], have_icon=have_icon, db=db)
+    unit = db.units[name]
+    have_icon = bool(db.get_icon_path(unit))
+    return template('unit', u=unit, have_icon=have_icon, db=db)
 
 
 @route('/json/<resource>')
@@ -266,8 +270,8 @@ def callback():
     if cat2 != u2.web_category:
         u2 = next(db2.get_units(db2.unit_groups[cat2][3]))
 
-    have_icon1 = bool(db1.get_icon_path(u1.safename))
-    have_icon2 = bool(db2.get_icon_path(u2.safename))
+    have_icon1 = bool(db1.get_icon_path(u1))
+    have_icon2 = bool(db2.get_icon_path(u2))
     return template('compare', request=request,
                     db1=db1, db2=db2,
                     u1=u1, u2=u2,
@@ -285,7 +289,7 @@ def callback():
 @route('/build_icons/<name>')
 def callback(name):
     db = get_db()
-    icon = db.get_icon_path(name)
+    icon = db.get_icon_path(db.units[name])
     if icon:
         return static_file(icon, root=db.root)
     else:
