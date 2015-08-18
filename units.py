@@ -41,8 +41,10 @@ for description, directory in CONFIG['versions']:
 
 
 def delocalize(text):
-    if text.startswith('!LOC'):
+    if text.startswith('!LOC('): # old-sytle localization
         return re.sub(r'!LOC\(.*?\):(.*)', r'\1', text)
+    elif text.startswith('!LOC:'): # new-style localization
+        return text[5:]
     else:
         return text
 
