@@ -31,16 +31,21 @@ not to archived versions. Archives are generated separately for each expansion.
 """)
     raise
 
-def get_version(description):
-    return re.sub(r'.*?(\d{4,}).*', r'\1', description)
 
 VERSION_DIRS = collections.OrderedDict()
 DESCRIPTIONS = collections.OrderedDict()
+
 for description, directory in CONFIG['versions']:
-    version = get_version(description)
+    v0 = re.sub(r'.*?(\d{4,}).*', r'\1', description)
+
+    version = v0
+    suffix = 'a'
+    while version in DESCRIPTIONS:
+        version = v0 + suffix
+        suffix = chr(ord(suffix)+1)
+
     VERSION_DIRS[version] = directory
     DESCRIPTIONS[version] = description
-
 
 def delocalize(text):
     if text.startswith('!LOC('): # old-sytle localization

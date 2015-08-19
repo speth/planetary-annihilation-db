@@ -177,7 +177,7 @@ def get_db(key=None):
         key = request.query.version or LATEST_VERSION
 
     desc, *mods = key.split(':')
-    version = units.get_version(desc)
+    version = desc
 
     if version not in AVAILABLE_VERSIONS:
         logging.warning(
