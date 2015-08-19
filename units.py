@@ -262,6 +262,7 @@ class Unit(Thing):
     assist_buildable_only = None
     spawn_layers = ()
     amphibious = False
+    hover = False
     build_cost = 0
     build_inefficiency = 0
     health = 0
@@ -460,6 +461,8 @@ class Unit(Thing):
         nav_type = nav.pop('type', '')
         if nav_type == 'amphibious':
             self.amphibious = True
+        elif nav_type == 'hover':
+            self.hover = True
 
         try:
             recon = self.raw['recon']['observer'].pop('items')

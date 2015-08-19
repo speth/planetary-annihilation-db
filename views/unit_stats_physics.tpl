@@ -7,5 +7,8 @@
     % if u.amphibious:
       <li>Amphibious</li>
     % end
+    % if u.hover:
+      <li>Hovering</li>
+    % end
   </ul>
 </li>
