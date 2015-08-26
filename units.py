@@ -325,6 +325,8 @@ class Unit(Thing):
 
         if 'Basic' in self.unit_types:
             self.tier = 1
+        elif 'Titan' in self.unit_types:
+            self.tier = 3
         elif 'Advanced' in self.unit_types:
             self.tier = 2
 
