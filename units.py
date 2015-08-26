@@ -202,6 +202,9 @@ class VersionDb:
             if name in self.units:
                 self.units[name].accessible = False
 
+        if 'titan_structure' in self.units:
+            self.units['titan_structure'].tier = 3
+
     def report(self):
         print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
         print('{0:>30s}  {1:>7s}  {2:>7s}  {2:>7s}'.format('-'*20, *['-'*7]*3))
