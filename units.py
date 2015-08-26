@@ -205,6 +205,12 @@ class VersionDb:
         if 'titan_structure' in self.units:
             self.units['titan_structure'].tier = 3
 
+        if 'teleporter' in self.units:
+            self.units['teleporter'].tier = 1
+
+        if 'mining_platform' in self.units:
+            self.units['mining_platform'].tier = 2
+
     def report(self):
         print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
         print('{0:>30s}  {1:>7s}  {2:>7s}  {2:>7s}'.format('-'*20, *['-'*7]*3))
