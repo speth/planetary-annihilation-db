@@ -191,6 +191,16 @@ class VersionDb:
         for u in unitlist:
             Unit(self, u)
         self.build_build_tree()
+        self.apply_corrections()
+
+    def apply_corrections(self):
+        """ Fix things that are not correctly indicated by the unit JSON files"""
+
+        # These units are not actually buildable
+        disabled = ['tutorial_titan_commander', 'sea_mine']
+        for name in disabled:
+            if name in self.units:
+                self.units[name].accessible = False
 
     def report(self):
         print('{0:>30s}  {1:>7s}  {2:>7s}  {3:>7s}'.format('Name', 'HP', 'DPS', 'salvo'))
