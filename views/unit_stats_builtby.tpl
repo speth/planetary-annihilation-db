@@ -2,7 +2,7 @@
 <li>
   <div class='heading'>Built by:</div>
   <ul>
-    % for other in u.built_by:
+    % for other in sorted(u.built_by, key=lambda b: b.name):
     %   if other.variant and not webunits.show_variants():
     %     continue
     %   elif not other.accessible and not webunits.show_inaccessible():

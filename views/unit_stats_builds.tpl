@@ -3,7 +3,7 @@
 <li>
   <div class='heading'>Builds:</div>
   <ul>
-    % for other in u.builds:
+    % for other in sorted(u.builds, key=lambda b: b.name):
     %   if other.variant and not webunits.show_variants():
     %     continue
     %   elif not other.accessible and not webunits.show_inaccessible():
