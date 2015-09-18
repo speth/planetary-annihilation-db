@@ -84,6 +84,7 @@ class WebUnits(units.VersionDb):
             ('air', ('Aircraft', self.mobile_cols, self.mobile_data, 'Mobile & Air - Construction')),
             ('naval', ('Naval', self.mobile_cols, self.mobile_data, 'Mobile & Naval - Construction')),
             ('orbital', ('Orbital', self.unit_cols, self.unit_data, 'Orbital - Construction - Recon')),
+            ('titans', ('Titans', self.mobile_cols, self.mobile_data, 'Titan')),
             ('defense', ('Defensive Structures', self.unit_cols, self.unit_data, 'Structure & Defense')),
             ('economy', ('Economy', self.econ_cols, self.econ_data, 'Economy - Commander')),
             ('recon', ('Reconnaissance', self.recon_cols, self.recon_data, 'Recon')),
