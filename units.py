@@ -385,20 +385,26 @@ class Unit(Thing):
                 try:
                     if ('weapon' in name or 'primary_weapon' in name or
                         'aim_weapon' in name or 'secondary_weapon' in name):
-                        self.weapons.append(Weapon(self.db, resource))
-                        self.weapons[-1].count = tool['count']
+                        w = Weapon(self.db, resource)
+                        self.weapons.append(w)
+                        w.count = tool['count']
                         if 'death_weapon' in tool:
-                            self.weapons[-1].death_explosion = True
+                            w.death_explosion = True
+                        if 'projectiles_per_fire' in tool:
+                            w.projectiles_per_fire = tool['projectiles_per_fire']
                     elif 'build_arm' in name or tool.get('build_arm'):
                         self.build_arms.append(BuildArm(self.db, resource))
                         self.build_arms[-1].count = tool['count']
                     else:
                         test = Tool(self.db, resource)
                         if test.tool_type == 'TOOL_Weapon':
-                            self.weapons.append(Weapon(self.db, resource))
-                            self.weapons[-1].count = tool['count']
+                            w = Weapon(self.db, resource)
+                            self.weapons.append(w)
+                            w.count = tool['count']
                             if 'death_weapon' in tool:
-                                self.weapons[-1].death_explosion = True
+                                w.death_explosion = True
+                            if 'projectiles_per_fire' in tool:
+                                w.projectiles_per_fire = tool['projectiles_per_fire']
                         else:
                             print('unclassified tool for {}: {}'.format(
                                   self.name, tool))
@@ -556,6 +562,7 @@ class Weapon(Tool):
     ammo = None
     dps = 0.0
     damage = 0.0
+    projectiles_per_fire = 1
     muzzle_velocity = 0.0
     splash_damage = 0.0
     splash_radius = 0
@@ -597,7 +604,6 @@ class Weapon(Tool):
                 ammo_id = ammo_id[0]['id']
             self.ammo = Ammo(self.db, ammo_id)
             self.damage = self.ammo.damage
-            self.dps = round(self.rof * self.damage, 2)
             self.muzzle_velocity = self.ammo.muzzle_velocity
             self.splash_damage = self.ammo.splash_damage
             self.splash_radius = self.ammo.splash_radius
@@ -638,6 +644,9 @@ class Weapon(Tool):
     def __repr__(self):
         return '<Weapon: {} {!r}>'.format(self.safename, self.name)
 
+    @property
+    def dps(self):
+        return round(self.rof * self.damage * self.projectiles_per_fire, 2)
 
 class Ammo(Thing):
     damage = 0.0
