@@ -16,7 +16,8 @@
     % end
     % if not w.self_destruct and not w.death_explosion:
       % nx = '' if w.projectiles_per_fire == 1 else str(w.projectiles_per_fire) + 'x'
-      <li>Damage: {{w.dps}} DPS: {{nx}}{{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{w.rof}} shots per second)</li>
+      % suffix = '' if w.rof == 1 else 's'
+      <li>Damage: {{w.dps}} DPS: {{nx}}{{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{w.rof}} shot{{suffix}} per second)</li>
     % else:
       <li>Damage: {{w.damage}}</li>
     % end
