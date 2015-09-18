@@ -204,6 +204,7 @@ class VersionDb:
 
         if 'titan_structure' in self.units:
             self.units['titan_structure'].tier = 3
+            self.units['titan_structure'].unit_types.add('Titan')
 
         if 'teleporter' in self.units:
             self.units['teleporter'].tier = 1
