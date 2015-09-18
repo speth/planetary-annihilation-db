@@ -622,9 +622,17 @@ class Weapon(Tool):
             if ammo_source == 'energy':
                 self.energy_rate = - rate
                 self.energy_per_shot = ammo_per_shot
-            else:
+            elif ammo_source == 'metal':
                 self.metal_rate = - rate
                 self.metal_per_shot = ammo_per_shot
+            elif ammo_source == 'infinite':
+                self.energy_rate = 0
+                self.energy_per_shot = 0
+                self.metal_rate = 0
+                self.metal_per_shot = 0
+            else:
+                print('Unhandled ammo source {!r} for {}'.format(ammo_source, resource_name))
+
 
         if 'target_layers' in self.raw:
             self.target_layers = [layer[3:] if layer.startswith('WL_') else layer
