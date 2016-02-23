@@ -131,8 +131,8 @@ class VersionDb:
         else:
             names = (resource_name,)
 
-        for resource_name in names:
-            for directory in self.data_dirs:
+        for directory in self.data_dirs:
+            for resource_name in names:
                 path = directory + resource_name
                 if os.path.exists(path):
                     with open(path) as datafile:
