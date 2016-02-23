@@ -183,11 +183,7 @@ class VersionDb:
             commander.set_accessible()
 
     def load_units(self):
-        if self.expansion is None:
-            unitfile = '/pa/units/unit_list.json'
-        else:
-            unitfile = '/{}/units/unit_list.json'.format(self.expansion)
-        unitlist = json.load(open(self.root + unitfile))['units']
+        unitlist = self.get_json('/pa/units/unit_list.json')['units']
         for u in unitlist:
             Unit(self, u)
         self.build_build_tree()
