@@ -68,7 +68,7 @@
           ({{len(db.active_mods)}} active)
           % end
         <b class="caret"></b></a>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu mods_list">
           % for mod in units.AVAILABLE_MODS.values():
             <li>
               % if mod['identifier'] in db.active_mods:
