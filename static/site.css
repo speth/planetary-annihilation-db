@@ -99,3 +99,8 @@ ul.hide-excess.hide-after > li.hide-after {
 ul.hide-excess > li.current-version > a {
     font-weight: bold;
 }
+ul.dropdown-menu.mods_list {
+    height:500px;
+    overflow:hidden; 
+    overflow-y:scroll;
+}
