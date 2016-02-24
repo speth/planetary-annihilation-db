@@ -70,6 +70,7 @@ class WebUnits(units.VersionDb):
         self.units = {u.safename:u for u in self.units.values()
                       if u.health > 0 and u.build_cost > 0}
         self.sorted_units = sorted(self.units.values(), key=lambda u: u.build_cost)
+        self.icon_paths = {}
 
         if self.version != LATEST_VERSION or self.active_mods:
             self.queryversion = ':'.join([self.version] + self.active_mods)
@@ -111,16 +112,26 @@ class WebUnits(units.VersionDb):
                 yield u
 
     def get_icon_path(self, unit):
+        # returns root directory and icon path
+        if unit in self.icon_paths:
+            return self.icon_paths[unit]
+
         path_tmpl = ['/{exp}/units/{subdir}/{name}/{name}_icon_buildbar.png',
                      '/pa/units/{subdir}/{name}/{name}_icon_buildbar.png',
                      '/ui/main/game/live_game/img/build_bar/units/{name}.png',
                      '/ui/alpha/live_game/img/build_bar/units/{name}.png']
+
         subdir = unit.resource_name.split('/')[3]
-        for tmpl in path_tmpl:
-            filename = tmpl.format(name=unit.safename, subdir=subdir,
-                                   exp=self.expansion or 'pa')
-            if os.path.exists(self.root + filename):
-                return filename
+        for directory in self.data_dirs:
+            for tmpl in path_tmpl:
+                filename = tmpl.format(name=unit.safename, subdir=subdir,
+                                       exp=self.expansion or 'pa')
+                if os.path.exists(directory + filename):
+                    self.icon_paths[unit] = directory, filename
+                    return directory, filename
+
+        return None, None
+
 
     unit_cols = ['Name', 'Cost', 'DPS', 'HP']
     def unit_data(self, restriction):
@@ -292,9 +303,9 @@ def callback():
 @route('/build_icons/<name>')
 def callback(name):
     db = get_db()
-    icon = db.get_icon_path(db.units[name])
+    root, icon = db.get_icon_path(db.units[name])
     if icon:
-        return static_file(icon, root=db.root)
+        return static_file(icon, root=root)
     else:
         return static_file('blank.png', root='./static/')
 
