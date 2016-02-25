@@ -126,6 +126,9 @@ class WebUnits(units.VersionDb):
             for tmpl in path_tmpl:
                 filename = tmpl.format(name=unit.safename, subdir=subdir,
                                        exp=self.expansion or 'pa')
+                if unit.safename == 'L_mortar_tank':
+                    print('DEBUG: checking for icon in "{}": {}'.format(
+                        directory + filename, os.path.exists(directory + filename)))
                 if os.path.exists(directory + filename):
                     self.icon_paths[unit] = directory, filename
                     return directory, filename
@@ -304,6 +307,11 @@ def callback():
 def callback(name):
     db = get_db()
     root, icon = db.get_icon_path(db.units[name])
+    if name == 'L_mortar_tank':
+        print('DEBUG: Loading icon for "{}": root="{}", icon="{}"'.format(name, root, icon))
+        if root:
+            print('DEBUG: full path:', root + icon)
+            print('DEBUG: file exists? {}'.format(os.path.exists(root + icon)))
     if icon:
         return static_file(icon, root=root)
     else:
