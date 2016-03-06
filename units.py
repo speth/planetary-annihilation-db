@@ -162,19 +162,12 @@ class VersionDb:
                     unit.builds.add(other)
                     other.built_by.add(unit)
 
-        # find a reference commander
-        commanders = []
-        for unit in self.units.values():
-            base = unit.base
-            while base:
-                if base.safename == 'base_commander':
-                    commanders.append(unit)
-                    break
-                else:
-                    base = base.base
+        # find all commanders
+        commanders = [u for u in self.units.values()
+                      if 'Commander' in u.unit_types]
         commanders.sort(key=lambda x: x.name)
 
-        # Mark all the other commanders as 'variants'
+        # Mark all but the first as 'variants'
         for commander in commanders[1:]:
             commander.variant = True
 
