@@ -18,7 +18,7 @@
       % nx = '' if w.projectiles_per_fire == 1 else str(w.projectiles_per_fire) + 'x'
       % plural = '' if w.rof == 1 else 's'
       % rof = int(w.rof) if w.rof == int(w.rof) else w.rof
-      <li>Damage: {{w.dps}} DPS: {{nx}}{{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{rof}} shot{{plural}} per second)</li>
+      <li>Damage: {{w.dps}} DPS: {{nx}}{{w.damage}} damage every {{'{:.2f}'.format(1/w.rof)}} seconds ({{'{:.2g}'.format(rof)}} shot{{plural}} per second)</li>
     % else:
       <li>Damage: {{w.damage}}</li>
     % end
@@ -36,10 +36,20 @@
       <li>Pitch: {{w.pitch_range}}&deg; at {{w.pitch_rate}}&deg; per second</li>
     % end
     % if w.metal_per_shot:
-      <li>Metal consumption: {{w.metal_per_shot}} per shot ({{round(w.metal_per_shot * w.rof, 2)}} per second)</li>
+      <li>Metal consumption: {{w.metal_per_shot}} per shot</li>
     % end
     % if w.energy_per_shot:
-      <li>Energy consumption: {{w.energy_per_shot}} per shot ({{round(w.energy_per_shot * w.rof, 2)}} per second)</li>
+      <li>Energy consumption: {{w.energy_per_shot}} per shot</li>
+    % end
+    % if w.ammo_drain_time:
+      <li>Stored ammo drained after {{w.ammo_drain_time}} seconds ({{w.ammo_shots_to_drain}} shots)</li>
+    % end
+    % if w.ammo_recharge_time:
+      % if w.self_destruct:
+        <li>Charges in {{round(w.ammo_recharge_time, 2)}} seconds</li>
+      % else:
+        <li>Ammo recharged after {{round(w.ammo_recharge_time, 2)}} seconds</li>
+      % end
     % end
     % if w.ammo and w.ammo.metal_cost:
       <li>Metal cost: {{w.ammo.metal_cost}} per shot</li>

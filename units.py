@@ -569,6 +569,11 @@ class Weapon(Tool):
 
     ammo_source = None
     ammo_demand = 0 # rate at which stored ammo recharges
+    ammo_per_shot = 0
+    ammo_capacity = 0
+    ammo_drain_time = 0
+    ammo_recharge_time = 0
+    ammo_shots_to_drain = 0
 
     yaw_range = 0
     yaw_rate = 0
@@ -613,20 +618,40 @@ class Weapon(Tool):
             self.metal_per_shot = 0
 
         if self.ammo_source:
+            if 'ammo_demand' in self.raw:
+                self.ammo_demand = self.raw.pop('ammo_demand')
+                self.ammo_capacity = self.raw.pop('ammo_capacity')
+            if 'ammo_per_shot' in self.raw:
+                self.ammo_per_shot = self.raw.pop('ammo_per_shot')
             if self.ammo_source == 'time':
                 self.ammo_demand = 1
-            elif 'ammo_demand' in self.raw:
-                self.ammo_demand = self.raw.pop('ammo_demand')
 
-            ammo_per_shot = self.raw.pop('ammo_per_shot', 0)
-            rate = min(self.ammo_demand, round(ammo_per_shot * self.rof, 2))
+            if self.ammo_demand:
+                self.ammo_recharge_time = self.ammo_capacity / self.ammo_demand
+            else:
+                self.ammo_recharge_time = 0
+
+            if self.ammo_capacity == self.ammo_per_shot and self.ammo_recharge_time:
+                # Actual rate of fire may be strictly limited by ammo consumption
+                self.rof = min(self.rof, 1 / self.ammo_recharge_time)
+
+            rate = round(self.ammo_per_shot * self.rof, 2)
+            if self.ammo_demand and rate > self.ammo_demand:
+                t = round(self.ammo_capacity / (rate - self.ammo_demand), 2)
+                self.ammo_shots_to_drain = int(self.rof * t)
+                self.ammo_drain_time = round(self.ammo_shots_to_drain / self.rof, 2)
+            elif self.ammo_drain_time:
+                self.ammo_drain_time = 0
+
+            consumption_rate = min(self.ammo_demand,
+                                   round(self.ammo_per_shot * self.rof, 2))
 
             if self.ammo_source == 'energy':
-                self.energy_rate = - rate
-                self.energy_per_shot = ammo_per_shot
+                self.energy_rate = - consumption_rate
+                self.energy_per_shot = self.ammo_per_shot
             elif self.ammo_source == 'metal':
-                self.metal_rate = - rate
-                self.metal_per_shot = ammo_per_shot
+                self.metal_rate = - consumption_rate
+                self.metal_per_shot = self.ammo_per_shot
             elif self.ammo_source in ('infinite', 'time', 'factory'):
                 pass
             else:
