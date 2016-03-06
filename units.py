@@ -566,7 +566,9 @@ class Weapon(Tool):
     energy_rate = 0
     metal_per_shot = 0
     energy_per_shot = 0
-    ammo_demand = 0
+
+    ammo_source = None
+    ammo_demand = 0 # rate at which stored ammo recharges
 
     yaw_range = 0
     yaw_rate = 0
@@ -602,25 +604,33 @@ class Weapon(Tool):
         if 'max_range' in self.raw:
             self.max_range = self.raw.pop('max_range')
 
-        ammo_source = self.raw.pop('ammo_source', None)
-        if ammo_source:
-            if 'ammo_demand' in self.raw:
+        if 'ammo_source' in self.raw:
+            self.ammo_source = self.raw.pop('ammo_source')
+            # Don't inherit these values
+            self.energy_rate = 0
+            self.energy_per_shot = 0
+            self.metal_rate = 0
+            self.metal_per_shot = 0
+
+        if self.ammo_source:
+            if self.ammo_source == 'time':
+                self.ammo_demand = 1
+            elif 'ammo_demand' in self.raw:
                 self.ammo_demand = self.raw.pop('ammo_demand')
+
             ammo_per_shot = self.raw.pop('ammo_per_shot', 0)
             rate = min(self.ammo_demand, round(ammo_per_shot * self.rof, 2))
-            if ammo_source == 'energy':
+
+            if self.ammo_source == 'energy':
                 self.energy_rate = - rate
                 self.energy_per_shot = ammo_per_shot
-            elif ammo_source == 'metal':
+            elif self.ammo_source == 'metal':
                 self.metal_rate = - rate
                 self.metal_per_shot = ammo_per_shot
-            elif ammo_source == 'infinite':
-                self.energy_rate = 0
-                self.energy_per_shot = 0
-                self.metal_rate = 0
-                self.metal_per_shot = 0
+            elif self.ammo_source in ('infinite', 'time', 'factory'):
+                pass
             else:
-                print('Unhandled ammo source {!r} for {}'.format(ammo_source, resource_name))
+                print('Unhandled ammo source {!r} for {}'.format(self.ammo_source, resource_name))
 
 
         if 'target_layers' in self.raw:
