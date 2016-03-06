@@ -2,7 +2,7 @@
 <div style="width: 100%; overflow: hidden;">
   % if have_icon:
     <div style="width: 60px; float: left; margin-top:14px">
-      <img src='/build_icons/{{u.safename}}{{suffix}}' />
+      <img src='{{WEB_BASE}}/build_icons/{{u.safename}}{{suffix}}' />
     </div>
     <div style="margin-left: 72px;">
   % else:

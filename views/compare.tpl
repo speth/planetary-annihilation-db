@@ -69,20 +69,20 @@
   </div>
   <div class="row">
     <div class="col-sm-6">
-      % include unit_header u=u1, have_icon=have_icon1, db=db1
+      % include unit_header u=u1, have_icon=have_icon1, db=db1, WEB_BASE=WEB_BASE
       <ul>
-        % include unit_stats_basic u=u1, db=db1
+        % include unit_stats_basic u=u1, db=db1, WEB_BASE=WEB_BASE
         % if 'Mobile' not in u1.unit_types:
-        %   include unit_stats_building u=u1
+        %   include unit_stats_building u=u1, WEB_BASE=WEB_BASE
         % end
       </ul>
     </div>
     <div class="col-sm-6">
-      % include unit_header u=u2, have_icon=have_icon2, db=db2
+      % include unit_header u=u2, have_icon=have_icon2, db=db2, WEB_BASE=WEB_BASE
       <ul>
-        % include unit_stats_basic u=u2, db=db2
+        % include unit_stats_basic u=u2, db=db2, WEB_BASE=WEB_BASE
         % if 'Mobile' not in u2.unit_types:
-        %   include unit_stats_building u=u2
+        %   include unit_stats_building u=u2, WEB_BASE=WEB_BASE
         % end
       </ul>
     </div>
@@ -92,12 +92,12 @@
   <div class="row">
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_physics u=u1
+        % include unit_stats_physics u=u1, WEB_BASE=WEB_BASE
       </ul>
     </div>
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_physics u=u2
+        % include unit_stats_physics u=u2, WEB_BASE=WEB_BASE
       </ul>
     </div>
   </div>
@@ -106,12 +106,12 @@
   <div class="row">
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_recon u=u1
+        % include unit_stats_recon u=u1, WEB_BASE=WEB_BASE
       </ul>
     </div>
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_recon u=u2
+        % include unit_stats_recon u=u2, WEB_BASE=WEB_BASE
       </ul>
     </div>
   </div>
@@ -120,12 +120,12 @@
     <div class="row">
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_economy u=u1
+          % include unit_stats_economy u=u1, WEB_BASE=WEB_BASE
         </ul>
       </div>
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_economy u=u2
+          % include unit_stats_economy u=u2, WEB_BASE=WEB_BASE
         </ul>
       </div>
     </div>
@@ -135,12 +135,12 @@
     <div class="row">
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_weapons u=u1, db=db1
+          % include unit_stats_weapons u=u1, db=db1, WEB_BASE=WEB_BASE
         </ul>
       </div>
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_weapons u=u2, db=db2
+          % include unit_stats_weapons u=u2, db=db2, WEB_BASE=WEB_BASE
         </ul>
       </div>
     </div>
@@ -150,12 +150,12 @@
   <div class="row">
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_builds u=u1, db=db1
+        % include unit_stats_builds u=u1, db=db1, WEB_BASE=WEB_BASE
       </ul>
     </div>
     <div class="col-sm-6">
       <ul>
-        % include unit_stats_builds u=u2, db=db2
+        % include unit_stats_builds u=u2, db=db2, WEB_BASE=WEB_BASE
       </ul>
     </div>
   </div>
@@ -165,12 +165,12 @@
     <div class="row">
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_builtby u=u1, db=db1
+          % include unit_stats_builtby u=u1, db=db1, WEB_BASE=WEB_BASE
         </ul>
       </div>
       <div class="col-sm-6">
         <ul>
-          % include unit_stats_builtby u=u2, db=db2
+          % include unit_stats_builtby u=u2, db=db2, WEB_BASE=WEB_BASE
         </ul>
       </div>
     </div>
@@ -178,4 +178,4 @@
 
 </div>
 
-% rebase page db=db1, hide_nav_version=True, title='Compare'
+% rebase page db=db1, WEB_BASE=WEB_BASE, hide_nav_version=True, title='Compare'

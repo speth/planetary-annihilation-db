@@ -21,4 +21,4 @@
 </div>
 </div>
 </div>
-% rebase page db=db, title=resource
+% rebase page db=db, WEB_BASE=WEB_BASE, title=resource

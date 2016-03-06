@@ -19,10 +19,10 @@ Bug reports and feature requests are welcome and can be submitted to the
 <a href="https://github.com/speth/planetary-annihilation-db/issues">issue tracker</a>
 on Github.</p>
 
-<p>Planetary Annihilation &copy; 2014
+<p>Planetary Annihilation &copy; 2014-2016
 <a href="http://www.uberent.com/">Uber Entertainment</a>.</p>
 
-<p>PADB &copy; 2014 Raymond Speth.</p>
+<p>PADB &copy; 2014-2016 Raymond Speth.</p>
 
 </div>
 </div>
@@ -31,4 +31,4 @@ on Github.</p>
 </div>
 </div>
 
-% rebase page db=db, title='About'
+% rebase page db=db, WEB_BASE=WEB_BASE, title='About'
