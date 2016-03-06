@@ -179,7 +179,6 @@ AVAILABLE_VERSIONS = collections.OrderedDict(units.DESCRIPTIONS)
 if 'pa_root' in units.CONFIG:
     AVAILABLE_VERSIONS['current'] = 'current'
 LATEST_VERSION = next(reversed(AVAILABLE_VERSIONS))
-units.load_mods()
 DB_COUNTER = 0
 MAX_DBS = units.CONFIG.get('cache_size', 50)
 

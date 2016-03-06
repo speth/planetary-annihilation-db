@@ -811,7 +811,6 @@ def load_mods():
             AVAILABLE_MODS[modinfo['identifier']] = modinfo
 
 def load_all():
-    load_mods()
     dbs = {v: VersionDb(v) for v in CONFIG.get('versions', ())}
 
     for db in dbs.values():
@@ -824,6 +823,8 @@ def load_all():
         dbs['current'] = sorted(dbs.items())[-1][1]
 
     return dbs
+
+load_mods()
 
 if __name__ == '__main__':
     dbs = load_all()
