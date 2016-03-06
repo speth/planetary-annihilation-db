@@ -627,7 +627,8 @@ class Weapon(Tool):
             self.target_layers = [layer[3:] if layer.startswith('WL_') else layer
                                   for layer in self.raw.pop('target_layers', ())]
 
-        if self.raw.pop('self_destruct', False):
+        if (self.raw.pop('self_destruct', False) or
+            self.raw.pop('only_fire_once', False)):
             self.self_destruct = True
 
         if 'yaw_range' in self.raw:
