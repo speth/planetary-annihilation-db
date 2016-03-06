@@ -3,7 +3,7 @@ Local "web app" for the PA unit database. See http://localhost:8080/list
 """
 
 WEB_PORT = 8080
-WEB_BASE = ''
+WEB_BASE = '' # empty or root relative path eg /units
 
 # Step 0: Make sure we have Bottle. If not, download it.
 try:
