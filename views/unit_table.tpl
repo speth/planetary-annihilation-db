@@ -15,10 +15,10 @@
     % for row in data:
     <tr>
       <td>
-        <img class="unit-icon" src="/build_icons/{{row[0].safename}}{{suffix}}" />
+        <img class="unit-icon" src="{{WEB_BASE}}/build_icons/{{row[0].safename}}{{suffix}}" />
       </td>
       <td>
-        % include unit_link unit=row[0], db=db
+        % include unit_link unit=row[0], db=db, WEB_BASE=WEB_BASE
       </td>
 
       % for item in row[1:]:
@@ -28,4 +28,4 @@
     % end
   </tbody>
 </table>
-% rebase page title=caption, db=db
+% rebase page title=caption, db=db, WEB_BASE=WEB_BASE

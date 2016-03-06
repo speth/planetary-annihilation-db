@@ -320,6 +320,8 @@ class Unit(Thing):
                 self.spawn_layers = ('land',)
             elif layers == 'WL_WaterSurface':
                 self.spawn_layers = ('water surface',)
+            elif layers == 'WL_Underwater':
+                self.spawn_layers = ('under water',)
             elif layers == 'WL_DeepWater':
                 self.spawn_layers = ('deep water',)
             elif layers == 'WL_Air':
@@ -619,6 +621,15 @@ class Weapon(Tool):
                 self.energy_per_shot = 0
                 self.metal_rate = 0
                 self.metal_per_shot = 0
+            elif ammo_source == 'factory':
+                self.energy_rate = 0
+                self.energy_per_shot = 0
+                self.metal_rate = 0
+                self.metal_per_shot = 0
+            elif ammo_source == 'time':
+                self.energy_rate = 0
+                self.energy_per_shot = 0
+                self.metal_rate = 0
             else:
                 print('Unhandled ammo source {!r} for {}'.format(ammo_source, resource_name))
 

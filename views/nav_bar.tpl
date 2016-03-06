@@ -6,25 +6,25 @@
   <div class="container-fluid">
   <div class="navbar-collapse collapse navbar-responsive-collapse">
     <ul class="nav navbar-nav">
-      <li><a href="/{{suffix}}">Home</a></li>
+      <li><a href="{{WEB_BASE}}/{{suffix}}">Home</a></li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mobile<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="/table/builders{{suffix}}">Builders</a></li>
-          <li><a href="/table/vehicles{{suffix}}">Vehicles</a></li>
-          <li><a href="/table/bots{{suffix}}">Bots</a></li>
-          <li><a href="/table/air{{suffix}}">Air</a></li>
-          <li><a href="/table/naval{{suffix}}">Naval</a></li>
-          <li><a href="/table/orbital{{suffix}}">Orbital</a></li>
+          <li><a href="{{WEB_BASE}}/table/builders{{suffix}}">Builders</a></li>
+          <li><a href="{{WEB_BASE}}/table/vehicles{{suffix}}">Vehicles</a></li>
+          <li><a href="{{WEB_BASE}}/table/bots{{suffix}}">Bots</a></li>
+          <li><a href="{{WEB_BASE}}/table/air{{suffix}}">Air</a></li>
+          <li><a href="{{WEB_BASE}}/table/naval{{suffix}}">Naval</a></li>
+          <li><a href="{{WEB_BASE}}/table/orbital{{suffix}}">Orbital</a></li>
         </ul>
       </li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Buildings<b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="/table/factories{{suffix}}">Factories</a></li>
-          <li><a href="/table/economy{{suffix}}">Economy</a></li>
-          <li><a href="/table/defense{{suffix}}">Defense</a></li>
-          <li><a href="/table/other{{suffix}}">Other</a></li>
+          <li><a href="{{WEB_BASE}}/table/factories{{suffix}}">Factories</a></li>
+          <li><a href="{{WEB_BASE}}/table/economy{{suffix}}">Economy</a></li>
+          <li><a href="{{WEB_BASE}}/table/defense{{suffix}}">Defense</a></li>
+          <li><a href="{{WEB_BASE}}/table/other{{suffix}}">Other</a></li>
         </ul>
       </li>
       % q = {}
@@ -36,8 +36,8 @@
       %   q['v1'] = db.queryversion
       %   q['v2'] = db.queryversion
       % end
-      <li><a href="/compare?{{urllib.parse.urlencode(q)}}">Compare</a></li>
-      <li><a href="/about">About</a></li>
+      <li><a href="{{WEB_BASE}}/compare?{{urllib.parse.urlencode(q)}}">Compare</a></li>
+      <li><a href="{{WEB_BASE}}/about">About</a></li>
 
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -91,7 +91,7 @@
       % if not hide_version:
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Build: {{db.description}}<b class="caret"></b></a>
-        % include version_dropdown db=db, field='version'
+        % include version_dropdown db=db, WEB_BASE=WEB_BASE, field='version'
       </li>
       % end
     </ul>

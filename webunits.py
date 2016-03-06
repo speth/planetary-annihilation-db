@@ -2,6 +2,9 @@
 Local "web app" for the PA unit database. See http://localhost:8080/list
 """
 
+WEB_PORT = 8080
+WEB_BASE = '' # empty or root relative path eg /units
+
 # Step 0: Make sure we have Bottle. If not, download it.
 try:
     import bottle
@@ -222,7 +225,7 @@ def get_db(key=None):
     return db
 
 
-@route('/table/<name>')
+@route(WEB_BASE+'/table/<name>')
 def callback(name):
     db = get_db()
     caption, columns, data_function, categories = db.unit_groups[name]
@@ -230,20 +233,21 @@ def callback(name):
                     caption=caption,
                     columns=columns,
                     data=data_function(categories),
-                    db=db)
+                    db=db, WEB_BASE=WEB_BASE)
 
 
-@route('/')
+@route(WEB_BASE)
+@route(WEB_BASE+'/')
 def callback():
     db = get_db()
     tables = {}
     for group,(caption, _, _, categories) in db.unit_groups.items():
         tables[group] = db.get_units(categories)
 
-    return template('all_units_list', db=db, **tables)
+    return template('all_units_list', db=db, WEB_BASE=WEB_BASE, **tables)
 
 
-@route('/unit/<name>')
+@route(WEB_BASE+'/unit/<name>')
 def callback(name):
     db = get_db()
     if name not in db.units:
@@ -251,10 +255,10 @@ def callback(name):
             name, db.version))
     unit = db.units[name]
     have_icon = bool(db.get_icon_path(unit))
-    return template('unit', u=unit, have_icon=have_icon, db=db)
+    return template('unit', u=unit, have_icon=have_icon, db=db, WEB_BASE=WEB_BASE)
 
 
-@route('/json/<resource>')
+@route(WEB_BASE+'/json/<resource>')
 def callback(resource):
     version = request.query.version or LATEST_VERSION
     db = get_db()
@@ -262,12 +266,12 @@ def callback(resource):
     for item,key in re.findall(r"('/pa/.+?/(\w+)\.json')", text):
         if key in db.full_names:
             ver = '?version={}'.format(version) if version != LATEST_VERSION else ''
-            text = text.replace(item, "<a href='/json/{}{}'>{}</a>".format(key, ver, item))
+            text = text.replace(item, "<a href='" + WEB_BASE+ "/json/{}{}'>{}</a>".format(key, ver, item))
 
-    return template('json', db=db, resource=resource, text=text)
+    return template('json', db=db, WEB_BASE=WEB_BASE, resource=resource, text=text)
 
 
-@route('/compare')
+@route(WEB_BASE+'/compare')
 def callback():
     v1 = request.query.v1 or LATEST_VERSION
     v2 = request.query.v2 or LATEST_VERSION
@@ -290,16 +294,17 @@ def callback():
                     u1=u1, u2=u2,
                     v1=v1, v2=v2,
                     cat1=cat1, cat2=cat2,
-                    have_icon1=have_icon1, have_icon2=have_icon2)
+                    have_icon1=have_icon1, have_icon2=have_icon2,
+                    WEB_BASE=WEB_BASE)
 
 
-@route('/about')
+@route(WEB_BASE+'/about')
 def callback():
     db = get_db()
-    return template('about', db=db)
+    return template('about', db=db, WEB_BASE=WEB_BASE)
 
 
-@route('/build_icons/<name>')
+@route(WEB_BASE+'/build_icons/<name>')
 def callback(name):
     db = get_db()
     root, icon = db.get_icon_path(db.units[name])
@@ -309,20 +314,20 @@ def callback(name):
         return static_file('blank.png', root='./static/')
 
 
-@route('/static/<filename>')
+@route(WEB_BASE+'/static/<filename>')
 def callback(filename):
     return static_file(filename, root='./static/')
 
-@route('/fonts/<filename>')
+@route(WEB_BASE+'/fonts/<filename>')
 def callback(filename):
     return static_file(filename, root='./static/')
 
-@route('/robots.txt')
+@route(WEB_BASE+'/robots.txt')
 def callback():
     return static_file('robots.txt', root='./static/')
 
 if __name__ == '__main__':
-    run(host='localhost', port=8080,
+    run(host='localhost', port=WEB_PORT,
         reloader=True, # Reload on changes to .py files
         debug=True, # Reload changes to .tpl files
         )

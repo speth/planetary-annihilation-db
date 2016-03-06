@@ -10,7 +10,7 @@
     %     continue
     %   end
       <li>
-        % include unit_link unit=other, db=db
+        % include unit_link unit=other, db=db, WEB_BASE=WEB_BASE
         % if u.build_rate and other.build_cost:
           ({{webunits.timestr(other.build_cost / u.build_rate)}})
         % end

@@ -48,6 +48,6 @@
     % if w.target_layers:
       <li>Targets: {{', '.join(w.target_layers)}}</li>
     % end
-    <li><a href="/json/{{w.safename}}{{suffix}}">Blueprint</a></li>
+    <li><a href="{{WEB_BASE}}/json/{{w.safename}}{{suffix}}">Blueprint</a></li>
   </ul>
 % end
